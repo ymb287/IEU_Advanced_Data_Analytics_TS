@@ -121,7 +121,6 @@ split_usa <- train_test_split(transformed_usa)
 
 
 ```{r extract data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
 # Extract the different variables
 
 
