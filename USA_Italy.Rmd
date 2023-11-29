@@ -44,7 +44,7 @@ p_load(
 # import data set xlxs
 data <- read_excel("Datasets.xlsx")
 
-# Display the data
+# Display the data set
 print(data)
 
 ```
@@ -204,6 +204,8 @@ analyze_diff_series(transformed_italy, "Italy")
 
 ```
 
+All good its stationary
+
 ## 1.4 Evaluate the data from the USA
 
 ```{r evaluate data usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -220,6 +222,7 @@ analyze_time_series(transformed_italy, "USA")
 analyze_diff_series(transformed_italy, "Italy")
 
 ```
+All good its stationary
 
 
 ## 1.5 Train test split
@@ -365,8 +368,63 @@ stocks_usa_test <- split_usa$stocks_test
 
 ```{r modelling italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Function for model creation
-gdp_italy_train
-gdp_italy_test
+ntest <- length(gdp_italy_test)
+
+# TODO in text : ACF slow decay, PACF sharp, probably AR 
+# 16 MA
+# Diff 1
+# 9 AR
+
+model_max <- Arima(gdp_italy_train, order = c(9, 1, 16), method = "ML")
+model_aic <- auto.arima(gdp_italy_train, ic = 'aic')
+model_bic <- auto.arima(gdp_italy_train, ic = 'bic')
+
+predict_max <- forecast::forecast(model_max, h = ntest, level = 0)
+predict_aic <- forecast::forecast(model_aic, h = ntest, level = 0)
+predict_bic <- forecast::forecast(model_bic, h = ntest, level = 0)
+
+# Get the AIC 
+model_max$aic
+model_aic$aic
+model_bic$aic
+
+print()
+
+accuracy(predict_max, gdp_italy_test)
+accuracy(predict_aic, gdp_italy_test)
+accuracy(predict_bic, gdp_italy_test)
+
+# Two best:
+model_aic # WHAT IS SMA1?
+model_bic
+
+```
+
+
+```{r}
+
+### plot the forecasts
+
+elp$pred <- c(model$fitted, pred$mean)
+
+ggplot(elp)+ 
+  geom_line(aes(mdy(DATE), Value, group = 1))+
+  geom_line(aes(mdy(DATE), pred, group = 1), color = "dodgerblue4")+
+  geom_vline(aes(xintercept=mdy("02-01-2016")), color = "darkorange2", size = 0.9)+
+  xlab("Date")+
+  ylab("Electric production")
+
+### zoom into the test set
+
+ggplot(elp[374:397,])+ 
+  geom_line(aes(mdy(DATE), Value, group = 1))+
+  geom_line(aes(mdy(DATE), pred, group = 1), color = "dodgerblue4")+
+  xlab("Date")+
+  ylab("Electric production")
 
 
 ```
+
+
+
+
