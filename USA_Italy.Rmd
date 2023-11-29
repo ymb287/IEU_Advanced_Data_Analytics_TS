@@ -81,6 +81,9 @@ print(data)
 
 ```
 
+TODO Description
+
+
 ## 1.2 Prepare the data
 
 ```{r transform data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -117,82 +120,146 @@ transformed_usa <- transform_data(data_usa)
 
 ```
 
-```{r plot the data italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+TODO Description
 
-# Plot the Italy data
+```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Plot the Italy gdp
 plot(transformed_italy$gdp, main = "GDP in Italy"
      , xlab = "Year", ylab = "GDP")
+
+```
+
+TODO Description
+
+```{r plot cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Plot the Italy cpi
 plot(transformed_italy$cpi, main = "CPI in Italy"
      , xlab = "Year", ylab = "CPI")
+
+```
+
+TODO Description
+
+```{r plot stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Plot the Italy data
 plot(transformed_italy$stocks, main = "Stocks in Italy"
      , xlab = "Year", ylab = "Stocks")
 
+```
 
-# TODO Use different boxes, so we can do an interpretation after each plot
+TODO Description
+
+```{r plot gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Plot the USA gdp
+plot(transformed_usa$gdp, main = "GDP in the USA"
+     , xlab = "Year", ylab = "GDP")
 
 ```
 
-```{r plot the data usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+TODO Description
 
-# Plot the USA data
-plot(transformed_usa$gdp, main = "GDP in USA"
-     , xlab = "Year", ylab = "GDP")
-plot(transformed_usa$cpi, main = "CPI in USA"
+```{r plot cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Plot the USA cpi
+plot(transformed_usa$cpi, main = "CPI in the USA"
      , xlab = "Year", ylab = "CPI")
-plot(transformed_usa$stocks, main = "Stocks in USA"
+
+```
+
+TODO Description
+
+
+```{r plot stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Plot the USA stocks
+plot(transformed_usa$stocks, main = "Stocks in the USA"
      , xlab = "Year", ylab = "Stocks")
 
-# TODO Use different boxes, so we can do an interpretation after each plot
-
-
 ```
+
+TODO Describe
+
+
+
+
 
 TODO Looking into seasonality
 
 ## 1.3 Evaluate the data from Italy
 
-```{r evaluate data italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r evaluate gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Analyse the different variables for stationarity
-analyze_time_series <- function(ts_data, country) {
+analyze_time_series <- function(ts_data, country, variable) {
+
+  # Doing the ADF and PP test, as well as determining diff
+  adf_result <- adf.test(ts_data)
+  pp_result <- pp.test(ts_data)
+  num_diffs <- ndiffs(ts_data)
+
+  # Print results for the current variable
+  cat("Results for", variable, "in", country, ":\n")
+  cat("ADF Test:\n")
+  cat("  P-Value:", adf_result$p.value, "\n")
+  cat("PP Test:\n")
+  cat("  P-Value:", pp_result$p.value, "\n")
+  cat("Number of Differences Required for Stationarity:", num_diffs, "\n\n")
+  
   # Set up the plot
-  par(mfrow = c(2, 2))
+  par(mfrow = c(1, 2), mar = c(3, 4, 4, 1))
 
-  # Loop through the variables in the list
-  for (i in seq_along(names(ts_data))) {
-    variable <- names(ts_data)[i]
-    
-    # Doing the ADF and PP test, as well as determining diff
-    adf_result <- adf.test(ts_data[[variable]])
-    pp_result <- pp.test(ts_data[[variable]])
-    num_diffs <- ndiffs(ts_data[[variable]])
-
-    # Print results for the current variable
-    cat("Results for", variable, "in", country, ":\n")
-    cat("ADF Test:\n")
-    cat("  P-Value:", adf_result$p.value, "\n")
-    cat("PP Test:\n")
-    cat("  P-Value:", pp_result$p.value, "\n")
-    cat("Number of Differences Required for Stationarity:", num_diffs, "\n\n")
-
-    # ACF and PACF plots
-    acf(ts_data[[variable]], main = paste("ACF of", variable, "in", country))
-    pacf(ts_data[[variable]], main = paste("PACF of", variable, "in", country))
-    
-    # If we have processed the first two variables, reset layout for the next row
-    if (i == 2) {
-      par(mfrow = c(2, 2))
-    }
-  }
+  # ACF and PACF plots
+  acf(ts_data, main = paste("ACF of", variable, "in", country))
+  pacf(ts_data, main = paste("PACF of", variable, "in", country))
 }
 
-# Explore data of Italy
-analyze_time_series(transformed_italy, "Italy")
-
-
-# TODO Seperate the code to do an interpretation after every part
+# Explore gdp of Italy
+analyze_time_series(transformed_italy$gdp, "Italy", 'GDP')
 
 ```
+
+```{r evaluate cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Explore gdp of Italy
+analyze_time_series(transformed_italy$cpi, "Italy", 'CPI')
+
+```
+
+```{r evaluate stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Explore stocks of Italy
+analyze_time_series(transformed_italy$stocks, "Italy", 'Stocks')
+
+
+```
+
+## 1.4 Evaluate the data from USA
+
+```{r evaluate gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Explore gdp of USA
+analyze_time_series(transformed_usa$gdp, "USA", 'GDP')
+
+```
+
+```{r evaluate cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Explore cpi of USA
+analyze_time_series(transformed_usa$cpi, "USA", 'CPI')
+
+```
+
+```{r evaluate stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Explore stocks of USA
+analyze_time_series(transformed_usa$stocks, "USA", 'Stocks')
+
+```
+
 
 Non of the variables is stationary. We will have to difference them.
 
@@ -238,7 +305,7 @@ All good its stationary
 ```{r evaluate data usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Explore data of USA
-analyze_time_series(transformed_italy, "USA")
+analyze_diff_series(transformed_italy, "USA")
 
 ```
 
