@@ -29,6 +29,34 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Part 1: Prepare and inspect the data
 
+Steps for us:
+
+- Visual inspection of data DONE
+
+- Homoscedasticity testing DONE
+
+- Inspect autocorrelation with acf and pacf DONE
+
+- Inspect volatility clustering (if so, maybe GARCH needed?)
+
+- Inspect trend and seasonality with zoom in or decompose and if it has use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other
+
+- Maybe new autocorrelation with acf and pacf for the estimated seansonality and trend (if we use the holt winter model to mode arima)
+
+- Look for ARIMA models (on data and on estimated ets()/msts()
+
+- Compare models (including ets models)
+
+- Choose best model and visualize, look at residuals, maybe GARCH (or should be aready dicide this before using ARIMA Model and use it directly?)
+
+- Use maybe Garch, and compare those models
+
+- Summary of findings
+
+- Forcast and plot final model
+
+- conclusion of forecast
+
 ------------------------------------------------------------------------
 
 ## 1.1 Importing and inspecting the data set
@@ -43,6 +71,10 @@ p_load(
 
 # import data set xlxs
 data <- read_excel("Datasets.xlsx")
+
+# removing not used columns Housing and Unemployment
+data <- data[, -c(7, 9)]
+
 
 # Display the data set
 print(data)
@@ -60,29 +92,23 @@ data_usa <- subset(data, Country %in% c("USA"))
 transform_data <- function(df) {
   # Extract columns from the dataframe
   gdp <- df$'GDP, billion currency units'
-  housing_index <- df$'House price index'
   cpi <- df$'Consumer Price Index (CPI)'
-  unemployment <- df$'Unemployment rate, percent'
   stocks <- df$'Stock market index'
 
   # Drop missing values (becuase only every quarter)
   gdp <- na.omit(gdp)
-  housing_index <- na.omit(housing_index)
-  
+
   # Drop missing values (becuase last in the month)
   cpi <- na.omit(cpi)
-  unemployment <- na.omit(unemployment)
   stocks <- na.omit(stocks)
 
   # Change to time series
   gdp <- ts(gdp, start = c(2000, 1), frequency = 4)
-  housing_index <- ts(housing_index, start = c(2000, 1), frequency = 4)
   cpi <- ts(cpi, start = c(2000, 1), frequency = 12)
-  unemployment <- ts(unemployment, start = c(2000, 1), frequency = 12)
   stocks <- ts(stocks, start = c(2000, 1), frequency = 12)
   
   # Return the time series as separate variables
-  return(list(gdp = gdp, housing_index = housing_index, cpi = cpi, unemployment = unemployment, stocks = stocks))
+  return(list(gdp = gdp, cpi = cpi, stocks = stocks))
 }
 
 # Apply the transformation function
@@ -96,14 +122,13 @@ transformed_usa <- transform_data(data_usa)
 # Plot the Italy data
 plot(transformed_italy$gdp, main = "GDP in Italy"
      , xlab = "Year", ylab = "GDP")
-plot(transformed_italy$housing_index, main = "Housing Index in Italy"
-     , xlab = "Year", ylab = "Housing Index")
 plot(transformed_italy$cpi, main = "CPI in Italy"
      , xlab = "Year", ylab = "CPI")
-plot(transformed_italy$unemployment, main = "Unemployment in Italy"
-     , xlab = "Year", ylab = "Unemployment")
 plot(transformed_italy$stocks, main = "Stocks in Italy"
      , xlab = "Year", ylab = "Stocks")
+
+
+# TODO Use different boxes, so we can do an interpretation after each plot
 
 ```
 
@@ -112,14 +137,13 @@ plot(transformed_italy$stocks, main = "Stocks in Italy"
 # Plot the USA data
 plot(transformed_usa$gdp, main = "GDP in USA"
      , xlab = "Year", ylab = "GDP")
-plot(transformed_usa$housing_index, main = "Housing Index in USA"
-     , xlab = "Year", ylab = "Housing Index")
 plot(transformed_usa$cpi, main = "CPI in USA"
      , xlab = "Year", ylab = "CPI")
-plot(transformed_usa$unemployment, main = "Unemployment in USA"
-     , xlab = "Year", ylab = "Unemployment")
 plot(transformed_usa$stocks, main = "Stocks in USA"
      , xlab = "Year", ylab = "Stocks")
+
+# TODO Use different boxes, so we can do an interpretation after each plot
+
 
 ```
 
@@ -164,6 +188,9 @@ analyze_time_series <- function(ts_data, country) {
 
 # Explore data of Italy
 analyze_time_series(transformed_italy, "Italy")
+
+
+# TODO Seperate the code to do an interpretation after every part
 
 ```
 
@@ -257,11 +284,13 @@ train_test_split <- function(data_list, train_percentage = 0.8) {
 split_italy <- train_test_split(transformed_italy)
 split_usa <- train_test_split(transformed_usa)
 
-print(split_italy$gdp_train) # TODO IS NOT A TS ANYMORE SHE DID NOT CARE EITHER?
+print(is.ts(split_italy$gdp_train)) # TODO IS NOT A TS ANYMORE SHE DID NOT CARE EITHER?
+print(split_italy$gdp_train) 
+
 
 ```
 
-Had for some reason huge troubles wiht it sting in ts so needed to creat this shit
+Had for some reason huge troubles with it sting in ts so needed to create this
 
 ```{r train test split alternative, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # TODO Do we want to use this or the one above?
@@ -320,14 +349,8 @@ split_usa <- train_test_split(transformed_usa)
 gdp_italy_train <- split_italy$gdp_train
 gdp_italy_test <- split_italy$gdp_test
 
-housing_index_italy_train <- split_italy$housing_index_train
-housing_index_italy_test <- split_italy$housing_index_test
-
 cpi_italy_train <- split_italy$cpi_train
 cpi_italy_test <- split_italy$cpi_test
-
-unemployment_italy_train <- split_italy$unemployment_train
-unemployment_italy_test <- split_italy$unemployment_test
 
 stocks_italy_train <- split_italy$stocks_train
 stocks_italy_test <- split_italy$stocks_test
@@ -336,14 +359,8 @@ stocks_italy_test <- split_italy$stocks_test
 gdp_usa_train <- split_usa$gdp_train
 gdp_usa_test <- split_usa$gdp_test
 
-housing_index_usa_train <- split_usa$housing_index_train
-housing_index_usa_test <- split_usa$housing_index_test
-
 cpi_usa_train <- split_usa$cpi_train
 cpi_usa_test <- split_usa$cpi_test
-
-unemployment_usa_train <- split_usa$unemployment_train
-unemployment_usa_test <- split_usa$unemployment_test
 
 stocks_usa_train <- split_usa$stocks_train
 stocks_usa_test <- split_usa$stocks_test
@@ -384,11 +401,14 @@ predict_aic <- forecast::forecast(model_aic, h = ntest, level = 0)
 predict_bic <- forecast::forecast(model_bic, h = ntest, level = 0)
 
 # Get the AIC 
+
+################## HAVE TO WORK WITH cat()
+
 model_max$aic
 model_aic$aic
 model_bic$aic
 
-print()
+print(' ')
 
 accuracy(predict_max, gdp_italy_test)
 accuracy(predict_aic, gdp_italy_test)
@@ -399,7 +419,7 @@ model_aic # WHAT IS SMA1?
 model_bic
 
 
-Box.test(auto_model_adjusted_bic$residuals) # p-value = 0.01 --> Residuals NOT white noise
+# Box.test(auto_model_adjusted_bic$residuals) # p-value = 0.01 --> Residuals NOT white noise
                                             # Big p is only white noise
 
 
@@ -410,22 +430,22 @@ Box.test(auto_model_adjusted_bic$residuals) # p-value = 0.01 --> Residuals NOT w
 
 ### plot the forecasts
 
-elp$pred <- c(model$fitted, pred$mean)
+# elp$pred <- c(model$fitted, pred$mean)
 
-ggplot(elp)+ 
-  geom_line(aes(mdy(DATE), Value, group = 1))+
-  geom_line(aes(mdy(DATE), pred, group = 1), color = "dodgerblue4")+
-  geom_vline(aes(xintercept=mdy("02-01-2016")), color = "darkorange2", size = 0.9)+
-  xlab("Date")+
-  ylab("Electric production")
+# ggplot(elp)+ 
+#   geom_line(aes(mdy(DATE), Value, group = 1))+
+#   geom_line(aes(mdy(DATE), pred, group = 1), color = "dodgerblue4")+
+#   geom_vline(aes(xintercept=mdy("02-01-2016")), color = "darkorange2", size = 0.9)+
+#   xlab("Date")+
+#   ylab("Electric production")
 
 ### zoom into the test set
 
-ggplot(elp[374:397,])+ 
-  geom_line(aes(mdy(DATE), Value, group = 1))+
-  geom_line(aes(mdy(DATE), pred, group = 1), color = "dodgerblue4")+
-  xlab("Date")+
-  ylab("Electric production")
+# ggplot(elp[374:397,])+
+#   geom_line(aes(mdy(DATE), Value, group = 1))+
+#   geom_line(aes(mdy(DATE), pred, group = 1), color = "dodgerblue4")+
+#   xlab("Date")+
+#   ylab("Electric production")
 
 
 ```
