@@ -398,6 +398,11 @@ accuracy(predict_bic, gdp_italy_test)
 model_aic # WHAT IS SMA1?
 model_bic
 
+
+Box.test(auto_model_adjusted_bic$residuals) # p-value = 0.01 --> Residuals NOT white noise
+                                            # Big p is only white noise
+
+
 ```
 
 
