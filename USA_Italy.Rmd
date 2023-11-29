@@ -37,7 +37,7 @@ Steps for us:
 
 - Inspect autocorrelation with acf and pacf DONE
 
-- Inspect volatility clustering (if so, maybe GARCH needed?)
+- Inspect volatility clustering (if so, maybe GARCH needed?) 
 
 - Inspect trend and seasonality with zoom in or decompose and if it has use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other
 
@@ -66,7 +66,7 @@ Steps for us:
 # import packages
 library(pacman)
 p_load(
-  readxl, tseries, tidyverse, dplyr, tidyr, forecast, fpp2, stats, quantmod
+  readxl, tseries, tidyverse, dplyr, tidyr, forecast, fpp2, stats, quantmod, zoo, lubridate, ggplot2
 )
 
 # import data set xlxs
@@ -82,7 +82,6 @@ print(data)
 ```
 
 TODO Description
-
 
 ## 1.2 Prepare the data
 
@@ -121,6 +120,8 @@ transformed_usa <- transform_data(data_usa)
 ```
 
 TODO Description
+
+## 1.3 Visual inspection of the data
 
 ```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -172,7 +173,6 @@ plot(transformed_usa$cpi, main = "CPI in the USA"
 
 TODO Description
 
-
 ```{r plot stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot the USA stocks
@@ -183,13 +183,7 @@ plot(transformed_usa$stocks, main = "Stocks in the USA"
 
 TODO Describe
 
-
-
-
-
-TODO Looking into seasonality
-
-## 1.3 Evaluate the data from Italy
+## 1.4 Evaluate the data from Italy
 
 ```{r evaluate gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -222,12 +216,60 @@ analyze_time_series(transformed_italy$gdp, "Italy", 'GDP')
 
 ```
 
+TODO Description
+
+```{r differenced gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Analyse the differenced variables for stationary
+analyze_diff_series <- function(ts_data, country, variable) {
+  
+  # Getting number of differences required for stationarity
+  num_diffs <- ndiffs(ts_data)
+  
+  # Differncing num_diffs times
+  for (i in 1:num_diffs) {
+    ts_data <- diff(ts_data)
+  }
+  
+  # Performing the ADF and PP test
+  adf_result <- adf.test(ts_data)
+  pp_result <- pp.test(ts_data)
+  num_diffs_new <- ndiffs(ts_data)
+  
+  # Print results for the current variable
+  cat("Results for", variable, "in", country, ":\n")
+  cat("ADF Test:\n")
+  cat("  P-Value:", adf_result$p.value, "\n")
+  cat("PP Test:\n")
+  cat("  P-Value:", pp_result$p.value, "\n")
+  cat("Number of Differences Required for Stationarity:", num_diffs_new, "\n\n")
+
+}
+
+# Difference data from Italy
+analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP')
+
+```
+
+TODO Description
+
 ```{r evaluate cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
-# Explore gdp of Italy
+# Explore cpi of Italy
 analyze_time_series(transformed_italy$cpi, "Italy", 'CPI')
 
 ```
+
+TODO Description
+
+```{r differenced cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Explore cpi of Italy
+analyze_diff_series(transformed_italy$cpi, "Italy", 'CPI')
+
+```
+
+TODO Description
 
 ```{r evaluate stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -236,6 +278,18 @@ analyze_time_series(transformed_italy$stocks, "Italy", 'Stocks')
 
 
 ```
+
+TODO Description
+
+```{r differenced stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Explore stocks of Italy
+analyze_diff_series(transformed_italy$stocks, "Italy", 'Stocks')
+
+```
+
+TODO Description
+
 
 ## 1.4 Evaluate the data from USA
 
@@ -246,12 +300,34 @@ analyze_time_series(transformed_usa$gdp, "USA", 'GDP')
 
 ```
 
+TODO Description
+
+```{r differenced gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Explore gdp of Italy
+analyze_diff_series(transformed_usa$gdp, "USA", 'GDP')
+
+```
+
+TODO Description
+
 ```{r evaluate cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore cpi of USA
 analyze_time_series(transformed_usa$cpi, "USA", 'CPI')
 
 ```
+
+TODO Description
+
+```{r differenced cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Explore cpi of Italy
+analyze_diff_series(transformed_usa$cpi, "USA", 'CPI')
+
+```
+
+TODO Description
 
 ```{r evaluate stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -260,66 +336,118 @@ analyze_time_series(transformed_usa$stocks, "USA", 'Stocks')
 
 ```
 
+TODO Description
 
-Non of the variables is stationary. We will have to difference them.
+```{r differenced stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-```{r evaluate differenced italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+# Explore stocks of Italy
+analyze_diff_series(transformed_usa$stocks, "USA", 'Stocks')
 
-# Analyse the differenced variables for stationary
-analyze_diff_series <- function(ts_data, country) {
-  # Loop through the variables in the list
-  for (variable in names(ts_data)) {
-    # Getting number of differences required for stationarity
-    ts <- ts_data[[variable]]
-    num_diffs <- ndiffs(ts)
-    
-    # Differncing num_diffs times
-    for (i in 1:num_diffs) {
-      ts <- diff(ts)
-    }
-    
-    # Performing the ADF and PP test
-    adf_result <- adf.test(ts)
-    pp_result <- pp.test(ts)
-    num_diffs_new <- ndiffs(ts)
-    
-    # Print results for the current variable
-    cat("Results for", variable, "in", country, ":\n")
-    cat("ADF Test:\n")
-    cat("  P-Value:", adf_result$p.value, "\n")
-    cat("PP Test:\n")
-    cat("  P-Value:", pp_result$p.value, "\n")
-    cat("Number of Differences Required for Stationarity:", num_diffs_new, "\n\n")
-  }
+```
+
+TODO Description
+
+## 1.5 Volatility clustering
+
+TODO? Is that it?
+
+```{r volatility clustering italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+plot_volatility_clusters <- function(time_series, variable, country,width = 4) {
+  
+  # Calculate the rolling standard deviation
+  rolling_sd <- zoo::rollapply(time_series, FUN = sd, align = "center", width = width)
+
+  # Assuming rolling_sd is already calculated
+  rolling_sd_data <- data.frame(Time = time(rolling_sd), RollingSD = coredata(rolling_sd))
+  
+  # Create the line plot
+  ggplot(data = rolling_sd_data, aes(x = Time, y = RollingSD)) +
+    geom_line() +
+    labs(title = paste("Rolling Standard Deviation of", variable, 'in', country),
+         x = "Time",
+         y = "Rolling Standard Deviation")
 }
 
-# Difference data from Italy
-analyze_diff_series(transformed_italy, "Italy")
+# Plotting the volatility clustering 
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'GDP', 8) # TODO which width?
+
 
 ```
 
-All good its stationary
+TODO Descripiton
 
-## 1.4 Evaluate the data from the USA
+```{r volatility clustering italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
-```{r evaluate data usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+# Plotting the volatility clustering
+plot_volatility_clusters(transformed_italy$cpi, 'Italy', 'CPI', 8)
 
-# Explore data of USA
-analyze_diff_series(transformed_italy, "USA")
+```
+
+TODO Descripiton
+
+```{r volatility clustering italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Plotting the volatility clustering
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 8)
+
+```
+
+TODO Descripiton
+
+```{r volatility clustering usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Plotting the volatility clustering
+plot_volatility_clusters(transformed_usa$gdp, 'USA','GDP', 8)
+
+
+```
+
+TODO Descripiton
+
+```{r volatility clustering usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Plotting the volatility clustering
+plot_volatility_clusters(transformed_usa$cpi, 'USA', 'CPI', 8)
+
+```
+
+TODO Descripiton
+
+```{r volatility clustering usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+
+# Plotting the volatility clustering
+plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 8)
+
+```
+
+TODO Descripiton
+
+## 1.7 Trend and Seansnality
+
+Only for Italy gdp?
+
+```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+# Zoom into the stock and buil the ets()
+
 
 ```
 
 
-```{r evaluate differenced usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Difference data from USA
-analyze_diff_series(transformed_italy, "Italy")
+<br>
 
-```
-All good its stationary
+------------------------------------------------------------------------
+
+<br>
+
+# Part 2: Model
 
 
-## 1.5 Train test split
+------------------------------------------------------------------------
+
+
+## 2.1 Train test split
 
 ```{r train test split, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -409,7 +537,6 @@ split_usa <- train_test_split(transformed_usa)
 ```
 
 
-
 ```{r extract data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Italy variables
@@ -434,21 +561,9 @@ stocks_usa_test <- split_usa$stocks_test
 
 ```
 
+## 2.2 Italy
 
-<br>
-
-------------------------------------------------------------------------
-
-<br>
-
-# Part 2: Model Itally
-
-
-------------------------------------------------------------------------
-
-<br>
-
-## 2 GDP
+### 2.2.1 GDP
 
 ```{r modelling italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Function for model creation
