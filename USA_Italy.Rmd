@@ -31,7 +31,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Steps for us:
 
-- Visual inspection of data DONE
+- Visual inspection of data and season, trend DONE
 
 - Stationarity testing DONE
 
@@ -39,7 +39,7 @@ Steps for us:
 
 - Inspect volatility clustering (if so, maybe GARCH needed?) 
 
-- Inspect trend and seasonality with zoom in or decompose and if it has use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other
+- if it has season use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other
 
 - Maybe new autocorrelation with acf and pacf for the estimated seansonality and trend (if we use the holt winter model to mode arima)
 
@@ -125,28 +125,29 @@ transformed_usa <- transform_data(data_usa)
 
 TODO Description
 
-## 1.3 Visual inspection of the data, 1.6 Trend and Seasonality here?
+## 1.3 Visual inspection of the data, including Seasonality
 
 ```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Create a function for visualization.
-plot_and_zoom <- function(data, num_years) {
+plot_and_zoom <- function(data, variable, country,num_years) {
+  
   # Extract the specified number of years from the time series
-  end_year <- start(data)[1] + num_years - 1
-  window_data <- window(data, start = start(data), end = c(end_year, 12))
+  end_date <- start(data) + c(num_years, 0)
+  window_data <- window(data, start = start(data), end = end_date)
   
   # Create the main plot
   main_plot <- ggplot(data, aes(x = time(data), y = as.numeric(data))) +
     geom_line() +
     theme_minimal() +
-    labs(title = "GDP in Italy", x = "Year", y = "GDP") +
+    labs(title = paste0(variable, ' in ', country), x = "Year", y = variable) +
     theme(panel.grid.minor = element_blank(),
       plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
   
   # Create a zoomed-in version with the specified number of years
   zoomed_in_plot <- ggplot(window_data, aes(x = time(window_data), y = as.numeric(window_data))) +
     geom_line() +
-    labs(title = "Zommed in GDP in Italy", x = "Year", y = "GDP") +
+    labs(title = paste0('Zoomed in ',variable, ' in ', country), x = "Year", y = variable) +
     theme_minimal() +
     theme(panel.grid.minor = element_blank(),
       plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
@@ -155,8 +156,8 @@ plot_and_zoom <- function(data, num_years) {
   
 }
 
-# Call the function with your time series data
-plot_and_zoom(transformed_italy$gdp, 4)
+# Plot the GDP for Italy
+plot_and_zoom(transformed_italy$gdp, 'GDP', 'Italy', 4)
 
 ```
 
@@ -164,9 +165,9 @@ TODO Description
 
 ```{r plot cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Plot the Italy cpi
-plot(transformed_italy$cpi, main = "CPI in Italy"
-     , xlab = "Year", ylab = "CPI")
+# Plot the CPI for Italy
+plot_and_zoom(transformed_italy$cpi, 'CPI', 'Italy', 4)
+
 
 ```
 
@@ -174,9 +175,8 @@ TODO Description
 
 ```{r plot stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Plot the Italy data
-plot(transformed_italy$stocks, main = "Stocks in Italy"
-     , xlab = "Year", ylab = "Stocks")
+# Plot stocks for Italy
+plot_and_zoom(transformed_italy$stocks, 'Stocks', 'Italy', 4)
 
 ```
 
@@ -184,9 +184,8 @@ TODO Description
 
 ```{r plot gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Plot the USA gdp
-plot(transformed_usa$gdp, main = "GDP in the USA"
-     , xlab = "Year", ylab = "GDP")
+# Plot GDP for USA
+plot_and_zoom(transformed_usa$gdp, 'GDP', 'USA', 4)
 
 ```
 
@@ -194,9 +193,8 @@ TODO Description
 
 ```{r plot cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Plot the USA cpi
-plot(transformed_usa$cpi, main = "CPI in the USA"
-     , xlab = "Year", ylab = "CPI")
+# Plot CPI for USA
+plot_and_zoom(transformed_usa$cpi, 'CPI', 'USA', 4)
 
 ```
 
@@ -204,9 +202,8 @@ TODO Description
 
 ```{r plot stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Plot the USA stocks
-plot(transformed_usa$stocks, main = "Stocks in the USA"
-     , xlab = "Year", ylab = "Stocks")
+# Plot stocks for USA
+plot_and_zoom(transformed_usa$stocks, 'Stocks', 'USA', 4)
 
 ```
 
@@ -395,7 +392,11 @@ plot_volatility_clusters <- function(time_series, variable, country,width = 4) {
     geom_line() +
     labs(title = paste("Rolling Standard Deviation of", variable, 'in', country),
          x = "Time",
-         y = "Rolling Standard Deviation")
+         y = "Rolling Standard Deviation") + 
+    theme_minimal() +
+    theme(panel.grid.minor = element_blank(),
+      plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+    
 }
 
 # Plotting the volatility clustering 
@@ -451,17 +452,6 @@ plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 8)
 ```
 
 TODO Descripiton
-
-## 1.6 Trend and Seasonality
-
-Only for Italy gdp?, or should we put this after the visual inspection? TODO
-
-```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
-# Zoom into the stock and buil the ets()
-
-
-```
-
 
 
 <br>
@@ -590,7 +580,55 @@ stocks_usa_test <- split_usa$stocks_test
 
 ```
 
-## 2.2 Italy
+## 2.2 Trend and Seasonality with holt???
+
+Only for Italy gdp and cpi?, or should we put this after the visual inspection? TODO
+
+
+```{r stationarity italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+
+plot_forecast <- function(train_data, test_data, ts_data, country, variable, alpha, model) {
+  model_hw <- ets(train_data, model = model, alpha = alpha)
+  ntest <- length(test_data)
+
+  pred <- forecast(model_hw, h = ntest, level = 0)
+
+  pred_hw <- c(model_hw$fitted, pred$mean)
+
+  # Extract the last date of the training data
+  last_date_train <- tail(time(train_data), 1)
+
+  ggplot(data.frame(time = time(ts_data), value = ts_data, pred_hw = pred_hw)) + 
+    geom_line(aes(x = time, y = value, group = 1)) +
+    geom_line(aes(x = time, y = pred_hw, group = 1), color = "dodgerblue4", size = 1.5) +
+    geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkorange2", size = 0.9) +
+    xlab("Year") +
+    ylab(paste(variable, "in", country)) +
+    labs(title = paste("Forecast for", variable, "in", country),
+         subtitle = paste("Exponential Smoothing (ETS) with alpha =", alpha),
+         caption = "Vertical line represents the last date of the training data") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+          plot.subtitle = element_text(size = 10, hjust = 0.5),
+          plot.caption = element_text(size = 6))
+  
+}
+
+plot_forecast(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, country = "Italy", variable = "GDP", alpha = 0.9, 'MMM')
+
+```
+
+```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = "Italy", variable = "CPI", alpha = 0.9, 'MMM')
+
+
+```
+
+
+
+## 2.3 Italy
 
 ### 2.2.1 GDP
 
