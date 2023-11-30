@@ -33,7 +33,7 @@ Steps for us:
 
 - Visual inspection of data DONE
 
-- Homoscedasticity testing DONE
+- Stationarity testing DONE
 
 - Inspect autocorrelation with acf and pacf DONE
 
@@ -45,7 +45,11 @@ Steps for us:
 
 - Look for ARIMA models (on data and on estimated ets()/msts()
 
-- Compare models (including ets models)
+- Identify the seasonal model by analyzing the seasonal coefficients of the ACF and PACF
+
+- Identify the regular component by exploring the ACF and PACF of the residuals of the seasonal model.
+
+- Compare models (including ets models)- AIC or Accuracy Metrics
 
 - Choose best model and visualize, look at residuals, maybe GARCH (or should be aready dicide this before using ARIMA Model and use it directly?)
 
@@ -66,7 +70,7 @@ Steps for us:
 # import packages
 library(pacman)
 p_load(
-  readxl, tseries, tidyverse, dplyr, tidyr, forecast, fpp2, stats, quantmod, zoo, lubridate, ggplot2
+  readxl, tseries, tidyverse, dplyr, tidyr, forecast, fpp2, stats, quantmod, zoo, lubridate, ggplot2, cowplot
 )
 
 # import data set xlxs
@@ -121,13 +125,38 @@ transformed_usa <- transform_data(data_usa)
 
 TODO Description
 
-## 1.3 Visual inspection of the data
+## 1.3 Visual inspection of the data, 1.6 Trend and Seasonality here?
 
 ```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Plot the Italy gdp
-plot(transformed_italy$gdp, main = "GDP in Italy"
-     , xlab = "Year", ylab = "GDP")
+# Create a function for visualization.
+plot_and_zoom <- function(data, num_years) {
+  # Extract the specified number of years from the time series
+  end_year <- start(data)[1] + num_years - 1
+  window_data <- window(data, start = start(data), end = c(end_year, 12))
+  
+  # Create the main plot
+  main_plot <- ggplot(data, aes(x = time(data), y = as.numeric(data))) +
+    geom_line() +
+    theme_minimal() +
+    labs(title = "GDP in Italy", x = "Year", y = "GDP") +
+    theme(panel.grid.minor = element_blank(),
+      plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+  
+  # Create a zoomed-in version with the specified number of years
+  zoomed_in_plot <- ggplot(window_data, aes(x = time(window_data), y = as.numeric(window_data))) +
+    geom_line() +
+    labs(title = "Zommed in GDP in Italy", x = "Year", y = "GDP") +
+    theme_minimal() +
+    theme(panel.grid.minor = element_blank(),
+      plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
+  
+  plot_grid(main_plot, zoomed_in_plot, ncol = 1)
+  
+}
+
+# Call the function with your time series data
+plot_and_zoom(transformed_italy$gdp, 4)
 
 ```
 
@@ -423,9 +452,9 @@ plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 8)
 
 TODO Descripiton
 
-## 1.7 Trend and Seansnality
+## 1.6 Trend and Seasonality
 
-Only for Italy gdp?
+Only for Italy gdp?, or should we put this after the visual inspection? TODO
 
 ```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 # Zoom into the stock and buil the ets()
