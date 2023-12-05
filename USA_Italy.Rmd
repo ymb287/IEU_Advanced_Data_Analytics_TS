@@ -689,7 +689,7 @@ evaluate_arima_models(model_list, gdp_italy_test)
 
 ```  
 
-```{r}
+```{r plot model italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
 
 # Plot the forecast
 plot_forecast_arima <- function(train_data, test_data, ts_data, country, variable, model) {
@@ -747,11 +747,10 @@ acf(model_aic$residuals)
 pacf(model_aic$residuals)
 
 
-```{r modelling italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot the forecast
-plot_forecast_arima(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", model_bic)
-
+plot_forecast_arima(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", model_aic)
 
 ```  
 
