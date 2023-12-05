@@ -127,6 +127,8 @@ TODO Description
 
 ## 1.3 Visual inspection of the data, including Seasonality
 
+QUESTIONHERE1:
+
 ```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Create a function for visualization.
@@ -468,6 +470,8 @@ TODO Descripiton
 
 ## 2.1 Train test split
 
+QUESTIONHERE2:
+
 ```{r train test split, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Creang train test split function
@@ -582,8 +586,10 @@ stocks_usa_test <- split_usa$stocks_test
 
 ## 2.2 Trend and Seasonality with holt???
 
-Only for Italy gdp and cpi?, or should we put this after the visual inspection? TODO
+Only for Italy gdp and cpi, or should we put this after the visual inspection? TODO
 
+
+QUESTIONHERE1:
 
 ```{r stationarity italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -615,13 +621,13 @@ plot_forecast <- function(train_data, test_data, ts_data, country, variable, alp
   
 }
 
-plot_forecast(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, country = "Italy", variable = "GDP", alpha = 0.9, 'MMM')
+plot_forecast(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, country = "Italy", variable = "GDP", alpha = 0.7, 'AAA')
 
 ```
 
 ```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = "Italy", variable = "CPI", alpha = 0.9, 'MMM')
+plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = "Italy", variable = "CPI", alpha = 0.7, 'AAA')
 
 
 ```
