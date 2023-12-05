@@ -601,7 +601,7 @@ plot_forecast <- function(train_data, test_data, ts_data, country, variable, alp
 
   ggplot(data.frame(time = time(ts_data), value = ts_data, pred_hw = pred_hw)) + 
     geom_line(aes(x = time, y = value, group = 1)) +
-    geom_line(aes(x = time, y = pred_hw, group = 1), color = "dodgerblue4", size = 1.5) +
+    geom_line(aes(x = time, y = pred_hw, group = 1), color = "dodgerblue4", size = 0.75) +
     geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkorange2", size = 0.9) +
     xlab("Year") +
     ylab(paste(variable, "in", country)) +
@@ -629,58 +629,131 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 ## 2.3 ARIMA
 
 ### 2.3.1 GDP Italy
-
-```{r modelling italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-# Function for model creation
-
-ntest <- length(gdp_italy_test)
-
-# TODO in text : ACF slow decay, PACF sharp, probably AR 
-# 16 MA
-# Diff 1
-# 9 AR
-
+```{r modelling italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+# Function to format ARIMA order
+format_arima_order <- function(arma) {
+  non_seasonal <- paste(arma[1], arma[6], arma[2])
+  seasonal <- paste(arma[3], arma[7], arma[4])
+  period <- arma[5]
+  return(paste("ARIMA(", non_seasonal, ")", "(", seasonal, ")", "[", period, "]", sep = ""))
+}
 
 # Function for model comparison
+evaluate_arima_models <- function(models, test_data) {
+  
+  results <- data.frame(Model = character(), AIC = numeric(), SIC = numeric(), BIC = numeric(), Residuals = character(), MPSE = numeric())
+  
+  for (model in models) {
+    fit <- model
+    order <- coef(fit)
+    
+    # Extract AIC and SIC
+    aic <- AIC(fit)
+    sic <- AIC(fit, k = log(length(fit$residuals)))
+    bic <- BIC(fit)
+    
+    # Check residuals for white noise
+    white_noise <- Box.test(fit$residuals, lag = 20, type = "Ljung-Box")$p.value > 0.05
+    residuals_check <- ifelse(white_noise, "White Noise", "Not White Noise")
+    
+    # Make predictions on test data
+    pred <- forecast(fit, h = length(test_data))
+    
+    # Calculate MPSE
+    mpse <- mean((pred$mean - test_data)^2)
 
+    # Append results to the data frame
+    name <- format_arima_order(model$arma)
+    result_row <- data.frame(Model = name, AIC = aic, SIC = sic, BIC = bic, Residuals = residuals_check, MPSE = mpse)
+    results <- rbind(results, result_row)
+  }
 
-model_max <- Arima(gdp_italy_train, order = c(9, 1, 16), method = "ML")
+  return(results)
+}
+
+# Choose the maximum lags
+model_max <- Arima(gdp_italy_train, order = c(9, 1, 16))
+
+# Choose the best model based on AIC
 model_aic <- auto.arima(gdp_italy_train, ic = 'aic')
+
+# Choose the best model based on BIC
 model_bic <- auto.arima(gdp_italy_train, ic = 'bic')
 
-predict_max <- forecast::forecast(model_max, h = ntest, level = 0)
-predict_aic <- forecast::forecast(model_aic, h = ntest, level = 0)
-predict_bic <- forecast::forecast(model_bic, h = ntest, level = 0)
 
-# Get the AIC 
+# Create a list of models
+model_list <- list(model_max, model_aic, model_bic)
 
-################## HAVE TO WORK WITH cat()
+# Evaluate the models
+evaluate_arima_models(model_list, gdp_italy_test)
 
-model_max$aic
-model_aic$aic
-model_bic$aic
+```  
 
-print(' ')
+```{r}
 
-accuracy(predict_max, gdp_italy_test)
-accuracy(predict_aic, gdp_italy_test)
-accuracy(predict_bic, gdp_italy_test)
+# Plot the forecast
+plot_forecast_arima <- function(train_data, test_data, ts_data, country, variable, model) {
+  ntest <- length(test_data)
+  pred <- forecast(model, h = ntest, level = 0)
+  pred_arima <- c(model$fitted, pred$mean)
+  
+  # Extract the last date of the training data
+  last_date_train <- tail(time(train_data), 1)
+  
+  name <- format_arima_order(model$arma)
+  
+  ggplot(data.frame(time = time(ts_data), value = ts_data, pred_arima = pred_arima)) + 
+    geom_line(aes(x = time, y = value, group = 1)) +
+    geom_line(aes(x = time, y = pred_arima, group = 1), color = 'darkgreen', size=0.75) +
+    geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkblue", size = 0.9) +
+    xlab("Year") +
+    ylab(paste(variable, "in", country)) +
+    labs(title = paste("Forecast for", variable, "in", country),
+         subtitle = paste("The best model is", name),
+         caption = "Vertical line represents the last date of the training data") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+          plot.subtitle = element_text(size = 10, hjust = 0.5),
+          plot.caption = element_text(size = 6))
+}
 
-# Two best:
-model_aic # WHAT IS SMA1?
-model_bic
-
-
-# Box.test(auto_model_adjusted_bic$residuals) # p-value = 0.01 --> Residuals NOT white noise
-                                            # Big p is only white noise
-
+# Plot the best model
+plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Italy", "GDP", model_bic)
 
 ```
-### 2.3.1 GDP Italy
+
 
 
 ### 2.3.1 CPI Italy
+
+```{r modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Creating different models
+model_max <- Arima(cpi_italy_train, order = c(12, 1, 12)) # TODO What order?
+model_aic <- auto.arima(cpi_italy_train, ic = 'aic')
+model_bic <- auto.arima(cpi_italy_train, ic = 'bic')
+
+# Create a list of models
+model_list <- list(model_max, model_aic, model_bic)
+
+# Evaluate the models
+evaluate_arima_models(model_list, cpi_italy_test)
+
+```  
+TODO HERE WE NEED TO LOOK INTO THE BEST MODELS BECAUSE IT IS NOT ONLY WHITE NOISE with 
+# Plot residuals
+plot(model_max$residuals)
+acf(model_aic$residuals)
+pacf(model_aic$residuals)
+
+
+```{r modelling italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Plot the forecast
+plot_forecast_arima(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", model_bic)
+
+
+```  
 
 ### 2.3.1 Stocks Italy
 
