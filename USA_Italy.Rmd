@@ -1,5 +1,4 @@
 ---
-#test
 title: "Advanced Data Analytics"
 author:
   - Loukas Gonzalez
