@@ -587,6 +587,7 @@ stocks_usa_test <- split_usa$stocks_test
 ## 2.2 Trend and Seasonality with holt???
 
 Only for Italy gdp and cpi, or should we put this after the visual inspection? TODO
+For Italy's GDP and CPI, we decided to use the Holt-Winters forecasting method as we saw that seasonality was heavily present. The results can be seen visually in the following graphs. 
 
 
 QUESTIONHERE1:
