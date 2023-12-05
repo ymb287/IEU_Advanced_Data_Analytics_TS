@@ -163,7 +163,7 @@ plot_and_zoom(transformed_italy$gdp, 'GDP', 'Italy', 4)
 
 ```
 
-TODO Description
+Looking at the graph of Italy’s GDP from the last 23 years, we can make some observations. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2023, with a sharp dip in 2020. The two interruptions in the trend correspond to the 2008 financial crisis and the 2020 Coronavirus Pandemic, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy’s economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as “aging population, inflation, stagnation, and the impact of globalization on trade and demand” affected heavily the country's development and economic growth (Ardeni & Gallegati, 2023). Italy’s development is slow mainly when compared to other countries European countries with similar capabilities and factors. 
 
 ```{r plot cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
