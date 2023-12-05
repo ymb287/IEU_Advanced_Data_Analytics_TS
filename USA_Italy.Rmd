@@ -31,35 +31,35 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Steps for us:
 
-- Visual inspection of data and season, trend DONE
+-   Visual inspection of data and season, trend DONE
 
-- Stationarity testing DONE
+-   Stationarity testing DONE
 
-- Inspect autocorrelation with acf and pacf DONE
+-   Inspect autocorrelation with acf and pacf DONE
 
-- Inspect volatility clustering (if so, maybe GARCH needed?) 
+-   Inspect volatility clustering (if so, maybe GARCH needed?)
 
-- if it has season use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other
+-   if it has season use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other
 
-- Maybe new autocorrelation with acf and pacf for the estimated seansonality and trend (if we use the holt winter model to mode arima)
+-   Maybe new autocorrelation with acf and pacf for the estimated seasonality and trend (if we use the holt winter model to mode arima)
 
-- Look for ARIMA models (on data and on estimated ets()/msts()
+-   Look for ARIMA models (on data and on estimated ets()/msts()
 
-- Identify the seasonal model by analyzing the seasonal coefficients of the ACF and PACF
+-   Identify the seasonal model by analyzing the seasonal coefficients of the ACF and PACF
 
-- Identify the regular component by exploring the ACF and PACF of the residuals of the seasonal model.
+-   Identify the regular component by exploring the ACF and PACF of the residuals of the seasonal model.
 
-- Compare models (including ets models)- AIC or Accuracy Metrics
+-   Compare models (including ets models)- AIC or Accuracy Metrics
 
-- Choose best model and visualize, look at residuals, maybe GARCH (or should be aready dicide this before using ARIMA Model and use it directly?)
+-   Choose best model and visualize, look at residuals, maybe GARCH (or should be aready dicide this before using ARIMA Model and use it directly?)
 
-- Use maybe Garch, and compare those models
+-   Use maybe Garch, and compare those models
 
-- Summary of findings
+-   Summary of findings
 
-- Forcast and plot final model
+-   Forcast and plot final model
 
-- conclusion of forecast
+-   conclusion of forecast
 
 ------------------------------------------------------------------------
 
@@ -163,7 +163,7 @@ plot_and_zoom(transformed_italy$gdp, 'GDP', 'Italy', 4)
 
 ```
 
-Looking at the graph of Italy’s GDP from the last 23 years, we can make some observations. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2023, with a sharp dip in 2020. The two interruptions in the trend correspond to the 2008 financial crisis and the 2020 Coronavirus Pandemic, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy’s economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as “aging population, inflation, stagnation, and the impact of globalization on trade and demand” affected heavily the country's development and economic growth (Ardeni & Gallegati, 2023). Italy’s development is slow mainly when compared to other countries European countries with similar capabilities and factors. 
+Looking at the graph of Italy's GDP from the last 23 years, we can make some observations. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2023, with a sharp dip in 2020. The two interruptions in the trend correspond to the 2008 financial crisis and the 2020 Coronavirus Pandemic, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy's economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as "aging population, inflation, stagnation, and the impact of globalization on trade and demand" affected heavily the country's development and economic growth (Ardeni & Gallegati, 2023). Italy's development is slow mainly when compared to other countries European countries with similar capabilities and factors.
 
 ```{r plot cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -318,7 +318,6 @@ analyze_diff_series(transformed_italy$stocks, "Italy", 'Stocks')
 
 TODO Description
 
-
 ## 1.4 Evaluate the data from USA
 
 ```{r evaluate gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
@@ -455,7 +454,6 @@ plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 8)
 
 TODO Descripiton
 
-
 <br>
 
 ------------------------------------------------------------------------
@@ -464,9 +462,7 @@ TODO Descripiton
 
 # Part 2: Model
 
-
 ------------------------------------------------------------------------
-
 
 ## 2.1 Train test split
 
@@ -559,7 +555,6 @@ split_usa <- train_test_split(transformed_usa)
 
 ```
 
-
 ```{r extract data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Italy variables
@@ -587,8 +582,6 @@ stocks_usa_test <- split_usa$stocks_test
 ## 2.2 Trend and Seasonality with holt???
 
 Only for Italy gdp and cpi, or should we put this after the visual inspection? TODO
-For Italy's GDP and CPI, we decided to use the Holt-Winters forecasting method as we saw that seasonality was heavily present. The results can be seen visually in the following graphs. 
-
 
 QUESTIONHERE1:
 
@@ -633,20 +626,24 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 
 ```
 
+## 2.3 ARIMA
 
-
-## 2.3 Italy
-
-### 2.2.1 GDP
+### 2.3.1 GDP Italy
 
 ```{r modelling italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
 # Function for model creation
+
 ntest <- length(gdp_italy_test)
 
 # TODO in text : ACF slow decay, PACF sharp, probably AR 
 # 16 MA
 # Diff 1
 # 9 AR
+
+
+# Function for model comparison
+
 
 model_max <- Arima(gdp_italy_train, order = c(9, 1, 16), method = "ML")
 model_aic <- auto.arima(gdp_italy_train, ic = 'aic')
@@ -680,8 +677,18 @@ model_bic
 
 
 ```
+### 2.3.1 GDP Italy
 
 
+### 2.3.1 CPI Italy
+
+### 2.3.1 Stocks Italy
+
+### 2.3.1 GDP USA
+
+### 2.3.1 CPI USA
+
+### 2.3.1 Stocks USA
 ```{r}
 
 ### plot the forecasts
@@ -705,7 +712,3 @@ model_bic
 
 
 ```
-
-
-
-
