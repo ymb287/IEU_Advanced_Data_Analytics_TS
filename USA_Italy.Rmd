@@ -30,7 +30,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Part 1: Prepare and inspect the data
 
 Steps for us:
-
+#test
 - Visual inspection of data and season, trend DONE
 
 - Stationarity testing DONE
