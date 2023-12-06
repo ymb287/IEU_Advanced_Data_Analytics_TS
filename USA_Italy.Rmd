@@ -692,7 +692,7 @@ format_arima_order <- function(arma) {
 # Function for model comparison
 evaluate_arima_models <- function(models, test_data) {
   
-  results <- data.frame(Model = character(), AIC = numeric(), SIC = numeric(), BIC = numeric(), Residuals = character(), MPSE = numeric())
+  results <- data.frame(Model = character(), AIC = numeric(), SIC = numeric(), BIC = numeric(), Residuals = character(), MSPE = numeric())
   
   for (model in models) {
     fit <- model
@@ -710,12 +710,13 @@ evaluate_arima_models <- function(models, test_data) {
     # Make predictions on test data
     pred <- forecast(fit, h = length(test_data))
     
-    # Calculate MPSE
-    mpse <- mean((pred$mean - test_data)^2)
+    # Calculate MSPE
+    mspe <- mean(((pred$mean - test_data) / test_data)^2, na.rm = TRUE)*100
+
 
     # Append results to the data frame
     name <- format_arima_order(model$arma)
-    result_row <- data.frame(Model = name, AIC = aic, SIC = sic, BIC = bic, Residuals = residuals_check, MPSE = mpse)
+    result_row <- data.frame(Model = name, AIC = aic, SIC = sic, BIC = bic, Residuals = residuals_check, MSPE = mspe)
     results <- rbind(results, result_row)
   }
 
