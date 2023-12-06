@@ -628,6 +628,57 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 
 ## 2.3 ARIMA
 
+### TO WE NEED THIS REALLY OR DO WE NOT USE IT? QUESTIONHERE3
+```{r TODO model automation, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# TODO DO WE WANT TO USE THIS? 
+
+create_models <- function(p, d, q, train_data, test_data) {
+  results <- data.frame(order = character(),
+                         aic = numeric(),
+                         bic = numeric(),
+                         mpse = numeric())
+
+  for (i in 0:p) {
+    for (j in 0:q) {
+      order <- c(i, d, j)
+      fit <- Arima(train_data, order = order)
+      aic <- AIC(fit)
+      bic <- BIC(fit)
+
+      pred <- forecast(fit, h = length(test_data))
+      mpse <- mean((pred$mean - test_data)^2)
+
+      results <- rbind(results, data.frame(order = paste(order, collapse = "_"),
+                                           aic = aic,
+                                           bic = bic,
+                                           mpse = mpse))
+    }
+  }
+
+  # Choose parameters for the 3 lowest BIC, 3 lowest AIC, and 3 lowest MPSE
+  best_bic <- results[order(results$bic), ][1:3, ]
+  best_aic <- results[order(results$aic), ][1:3, ]
+  best_mpse <- results[order(results$mpse), ][1:3, ]
+
+  # Extract the selected orders
+  selected_orders <- unique(rbind(best_bic, best_aic, best_mpse)$order)
+
+  # Fit models with the selected orders
+  selected_models <- lapply(strsplit(selected_orders, "_"), function(x) {
+    order <- as.numeric(x)
+    fit <- Arima(train_data, order = order)
+    return(fit)
+  })
+
+  return(selected_models)
+}
+
+# Example usage:
+selected_models <- create_models(p = 2, d = 1, q = 2, train_data = gdp_italy_train, test_data = gdp_italy_test)
+
+```
+
 ### 2.3.1 GDP Italy
 ```{r modelling italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
 # Function to format ARIMA order
@@ -670,6 +721,7 @@ evaluate_arima_models <- function(models, test_data) {
 
   return(results)
 }
+
 
 # Choose the maximum lags
 model_max <- Arima(gdp_italy_train, order = c(9, 1, 16))
@@ -745,7 +797,6 @@ TODO HERE WE NEED TO LOOK INTO THE BEST MODELS BECAUSE IT IS NOT ONLY WHITE NOIS
 plot(model_max$residuals)
 acf(model_aic$residuals)
 pacf(model_aic$residuals)
-
 
 ```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
