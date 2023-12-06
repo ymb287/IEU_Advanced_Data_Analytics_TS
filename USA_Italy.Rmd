@@ -724,7 +724,7 @@ evaluate_arima_models <- function(models, test_data) {
 
 
 # Choose the maximum lags
-model_max <- Arima(gdp_italy_train, order = c(9, 1, 16))
+model_max <- forecast::Arima(gdp_italy_train, order = c(9, 1, 16))
 
 # Choose the best model based on AIC
 model_aic <- auto.arima(gdp_italy_train, ic = 'aic')
@@ -775,13 +775,12 @@ plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Ita
 ```
 
 
-
 ### 2.3.1 CPI Italy
 
 ```{r modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Creating different models
-model_max <- Arima(cpi_italy_train, order = c(12, 1, 12)) # TODO What order?
+model_max <- forecast::Arima(cpi_italy_train, order = c(12, 1, 12)) # TODO What order?
 model_aic <- auto.arima(cpi_italy_train, ic = 'aic')
 model_bic <- auto.arima(cpi_italy_train, ic = 'bic')
 
