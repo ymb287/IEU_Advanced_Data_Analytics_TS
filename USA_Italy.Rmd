@@ -89,6 +89,7 @@ TODO Description
 
 ## 1.2 Prepare the data
 
+
 ```{r transform data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Split the data into two dataframes based on the country
 data_italy <- subset(data, Country %in% c("Italy"))
