@@ -192,7 +192,7 @@ plot_and_zoom(transformed_usa$gdp, 'GDP', 'USA', 4)
 
 ```
 
-In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There are two specific moments where we see interruptions in the growth, which are in 2008 and 2020, which correspond to the Financial Crisis and the Coronavirus Pandemic. After both of these periods, we can observe that the GDP grew at a faster rate, especially after 2020. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or in the zoomed plot.  
+In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There are two specific moments where we see interruptions in the growth, which are in 2008 and 2020, which correspond to the Financial Crisis and the Coronavirus Pandemic. After both of these periods, we can observe that the GDP grew at a faster rate, especially after 2020. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or the zoomed plot. Moreover, it can be observed that the GDP for USA is significantly higher than Italy’s, mostly as a result of the US doing more business abroad and having a bigger economy. The USA's economy is stronger than Italy's due in part to their larger corporations, advancements in technology, and international trading practices.  
 
 ```{r plot cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -201,7 +201,7 @@ plot_and_zoom(transformed_usa$cpi, 'CPI', 'USA', 4)
 
 ```
 
-TODO Description
+USA’s CPI follows a very positive trend, with a continuous growth throughout the 23 year period. We can observe certain moments of slowdown, specifically after the 2008 financial crisis, but even with this, the CPI is constantly growing, at a somewhat slowrer rate. No seasonality or specific pattern can be observed in the plot or in the zoomed plot. This upward trend points to an economy that is typically growing and stable, with rare setbacks like the financial crisis eventually being resolved. These variations in the growth rate could also be a sign of the economy's resiliency and capacity to bounce back from setbacks, which would explain the CPI's general upward tendency.
 
 ```{r plot stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -210,7 +210,7 @@ plot_and_zoom(transformed_usa$stocks, 'Stocks', 'USA', 4)
 
 ```
 
-TODO Describe
+The Stock Market index for the USA different to what we observed in Italy’s, shows a clear upward trend, with some periods of higher volatility and shifts. Again, as noted in all of the previous plots, we see period of decline right in 2008, which corresponds to the financial crisis, where gains were lost in a very short period. The U.S. stock market proved strong after this trying time, rising and showing a steady growth trend, confirming the economy's capacity to come back from difficult periods. The U.S. financial system's inherent flexibility and the proactive actions of policymakers are frequently credited for this recovery.
 
 ## 1.4 Evaluate the data from Italy
 
