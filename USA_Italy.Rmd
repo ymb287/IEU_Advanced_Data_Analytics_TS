@@ -174,7 +174,7 @@ plot_and_zoom(transformed_italy$cpi, 'CPI', 'Italy', 4)
 
 ```
 
-TODO Description
+Italy’s CPI has seen a similar path to the GDP. From 2000 onwards, Italy's Consumer Price Index (CPI) has undergone fluctuations influenced by various economic factors. In the early 2000s, the CPI experienced constant growth, which continued until 2012, when it began to slow down and reduce the growth rate. This might be the consequence on the financial crisis, combined with internal economic and political issues. In 2022, the CPI had an immense surge, a consequence of consumer habits returning to the norm after the 2020 pandemic, which again follows what can be observed in the GDP. The zoomed plot also reveals seasonality, as we can observe dips in the CPI in the first part of each year for all of the observed periods. This could be attributed to high spending seasons of the year, as it usually is found in most CPI plots, such as holidays. 
 
 ```{r plot stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -183,7 +183,7 @@ plot_and_zoom(transformed_italy$stocks, 'Stocks', 'Italy', 4)
 
 ```
 
-TODO Description
+The Stock Market Index for Italy is very different from the previous charts and datasets. As observed, the market had many fluctuations throughout the last 23 years. We can observe that from 2000 to 2003, Italy’s stock market had a steep decline, followed by a rapid growth period that was again stopped by the financial crisis of 2008-2009. The index maintained high volatility for the following period, with short periods of growth or decline, but with an overall positive growth trend. Again, most of the behavior of the market is related to political decisions that the Italian government has made and external economic factors influencing investor confidence. Notably, the stock market showed increased volatility during times of political unpredictability or changes in governmental policy. Furthermore, the overall state of the world economy, particularly the Eurozone crisis, had a big impact on how the Italian stock market developed (Codogno & Galli, 2022). 
 
 ```{r plot gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -192,7 +192,7 @@ plot_and_zoom(transformed_usa$gdp, 'GDP', 'USA', 4)
 
 ```
 
-TODO Description
+In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There are two specific moments where we see interruptions in the growth, which are in 2008 and 2020, which correspond to the Financial Crisis and the Coronavirus Pandemic. After both of these periods, we can observe that the GDP grew at a faster rate, especially after 2020. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or in the zoomed plot.  
 
 ```{r plot cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
