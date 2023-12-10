@@ -27,6 +27,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
+For the final project of Advanced Data Analytics, we decided to analyze three variables of two different countries, and with them, find and dissect valuable information, with which we can after create forecasts. The two countries that we decided on were Italy and the US, two countries that despite their distinct economic landscapes, share a profound impact on the global stage. The variables that we will be using will be the country's GDP, which is one of the most crucial indicators of the overall growth of the country, the CPI or Consumer Price Index, which goes along with the GDP but also gives us further information, and the Stock Market Index for each country. 
+
 # Part 1: Prepare and inspect the data
 
 Steps for us:
@@ -210,7 +212,7 @@ plot_and_zoom(transformed_usa$stocks, 'Stocks', 'USA', 4)
 
 ```
 
-The Stock Market index for the USA different to what we observed in Italy’s, shows a clear upward trend, with some periods of higher volatility and shifts. Again, as noted in all of the previous plots, we see period of decline right in 2008, which corresponds to the financial crisis, where gains were lost in a very short period. The U.S. stock market proved strong after this trying time, rising and showing a steady growth trend, confirming the economy's capacity to come back from difficult periods. The U.S. financial system's inherent flexibility and the proactive actions of policymakers are frequently credited for this recovery.
+The Stock Market index for the USA different from what we observed in Italy, shows a clear upward trend, with some periods of higher volatility and shifts. Again, as noted in all of the previous plots, we see a period of decline right in 2008, which corresponds to the financial crisis, where gains were lost in a very short period. The U.S. stock market proved strong after this trying time, rising and showing a steady growth trend, confirming the economy's capacity to come back from difficult periods. The U.S. financial system's inherent flexibility and the proactive actions of policymakers are frequently credited for this recovery.
 
 ## 1.4 Evaluate the data from Italy
 
