@@ -87,7 +87,7 @@ print(data)
 
 ```
 
-TODO Description
+As observed, the years that we will be using for this analysis are from 2000 and onwards, giving us a comprehensive analysis of each country's variables throughout the 21st century. 
 
 ## 1.2 Prepare the data
 
