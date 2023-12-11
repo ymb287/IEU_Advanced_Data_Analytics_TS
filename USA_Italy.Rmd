@@ -27,6 +27,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
+For the final project of Advanced Data Analytics, we decided to analyze three variables of two different countries, and with them, find and dissect valuable information, with which we can after create forecasts. The two countries that we decided on were Italy and the US, two countries that despite their distinct economic landscapes, share a profound impact on the global stage. The variables that we will be using will be the country's GDP, which is one of the most crucial indicators of the overall growth of the country, the CPI or Consumer Price Index, which goes along with the GDP but also gives us further information, and the Stock Market Index for each country. 
+
 # Part 1: Prepare and inspect the data
 
 Steps for us:
@@ -85,7 +87,7 @@ print(data)
 
 ```
 
-TODO Description
+As observed, the years that we will be using for this analysis are from 2000 and onwards, giving us a comprehensive analysis of each country's variables throughout the 21st century. 
 
 ## 1.2 Prepare the data
 
@@ -192,7 +194,7 @@ plot_and_zoom(transformed_usa$gdp, 'GDP', 'USA', 4)
 
 ```
 
-In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There are two specific moments where we see interruptions in the growth, which are in 2008 and 2020, which correspond to the Financial Crisis and the Coronavirus Pandemic. After both of these periods, we can observe that the GDP grew at a faster rate, especially after 2020. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or in the zoomed plot.  
+In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There are two specific moments where we see interruptions in the growth, which are in 2008 and 2020, which correspond to the Financial Crisis and the Coronavirus Pandemic. After both of these periods, we can observe that the GDP grew at a faster rate, especially after 2020. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or the zoomed plot. Moreover, it can be observed that the GDP for USA is significantly higher than Italy’s, mostly as a result of the US doing more business abroad and having a bigger economy. The USA's economy is stronger than Italy's due in part to their larger corporations, advancements in technology, and international trading practices.  
 
 ```{r plot cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -201,7 +203,7 @@ plot_and_zoom(transformed_usa$cpi, 'CPI', 'USA', 4)
 
 ```
 
-TODO Description
+USA’s CPI follows a very positive trend, with a continuous growth throughout the 23 year period. We can observe certain moments of slowdown, specifically after the 2008 financial crisis, but even with this, the CPI is constantly growing, at a somewhat slowrer rate. No seasonality or specific pattern can be observed in the plot or in the zoomed plot. This upward trend points to an economy that is typically growing and stable, with rare setbacks like the financial crisis eventually being resolved. These variations in the growth rate could also be a sign of the economy's resiliency and capacity to bounce back from setbacks, which would explain the CPI's general upward tendency.
 
 ```{r plot stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -210,7 +212,7 @@ plot_and_zoom(transformed_usa$stocks, 'Stocks', 'USA', 4)
 
 ```
 
-TODO Describe
+The Stock Market index for the USA different from what we observed in Italy, shows a clear upward trend, with some periods of higher volatility and shifts. Again, as noted in all of the previous plots, we see a period of decline right in 2008, which corresponds to the financial crisis, where gains were lost in a very short period. The U.S. stock market proved strong after this trying time, rising and showing a steady growth trend, confirming the economy's capacity to come back from difficult periods. The U.S. financial system's inherent flexibility and the proactive actions of policymakers are frequently credited for this recovery.
 
 ## 1.4 Evaluate the data from Italy
 
@@ -245,7 +247,7 @@ analyze_time_series(transformed_italy$gdp, "Italy", 'GDP')
 
 ```
 
-TODO Description
+In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed significant correlations within confidence intervals of -0.2 and 0.2. Strikingly, 19 lags exceeded the upper limit, suggesting prolonged positive correlations with an estimated AR 1. We anticipate a sharp decline in the Partial Autocorrelation Function (PACF). This hints at an upcoming substantial shift in Italy's GDP dynamics, providing valuable insights for forecasting and strategic decision-making
 
 ```{r differenced gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -280,7 +282,8 @@ analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP')
 
 ```
 
-TODO Description
+In examining the differenced variables for stationarity using the provided R code, the focus is on Italy's Gross Domestic Product (GDP). The Augmented Dickey-Fuller (ADF) test yielded a p-value of 0.0148, while the Phillips-Perron (PP) test resulted in a p-value of 0.01. These outcomes suggest statistical significance, indicating that the differenced GDP series is likely stationary. It's important to note that, unlike the Consumer Price Index (CPI) previously analyzed, the GDP data required a certain number of differences for achieving stationarity (in this case, 0 differences). This specific detail highlights the distinct characteristics of economic variables and their treatment in time series analysis. The achieved stationarity through differencing enhances the reliability of statistical modeling, allowing for more dependable forecasting and strategic decision-making based on the transformed GDP data for Italy.
+
 
 ```{r evaluate cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -289,7 +292,7 @@ analyze_time_series(transformed_italy$cpi, "Italy", 'CPI')
 
 ```
 
-TODO Description
+In our financial analysis of Italy's Consumer Price Index (CPI), the Autocorrelation Function (ACF) showed a gradual decline, especially at lag 19. This hints at weakening correlations over time. Looking ahead, we expect a noticeable spike in the Partial Autocorrelation Function (PACF), reflecting the declining ACF trend. The confidence intervals of -0.1 and 0.1 add statistical weight to these correlations. This info helps us predict a significant positive spike in the PACF, offering valuable insights for future forecasting and decisions.
 
 ```{r differenced cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -298,7 +301,8 @@ analyze_diff_series(transformed_italy$cpi, "Italy", 'CPI')
 
 ```
 
-TODO Description
+In the analysis of Italy's Consumer Price Index, the Augmented Dickey-Fuller (ADF) test yielded a p-value of 0.0235, and the Phillips-Perron (PP) test produced a p-value of 0.01. These results indicate statistical significance, suggesting that the CPI series is likely stationary without the need for differencing (the number of differences required for stationarity is 0). In conclusion, the CPI data for Italy appears to show stationarity, which is a crucial characteristic for time series analysis, making it more suitable for reliable statistical modeling and forecasting.
+
 
 ```{r evaluate stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
