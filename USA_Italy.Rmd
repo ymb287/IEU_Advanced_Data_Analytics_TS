@@ -782,7 +782,7 @@ plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Ita
 ```{r modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Creating different models
-model_max <- forecast::Arima(cpi_italy_train, order = c(25, 1, 5), method = 'ML') # TODO What order?
+model_max <- forecast::Arima(cpi_italy_train, order = c(5, 1, 25)) # TODO What order?
 model_aic <- auto.arima(cpi_italy_train, ic = 'aic')
 model_bic <- auto.arima(cpi_italy_train, ic = 'bic')
 
