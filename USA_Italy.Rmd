@@ -87,7 +87,7 @@ print(data)
 
 ```
 
-As observed, the years that we will be using for this analysis are from 2000 and onwards, giving us a comprehensive analysis of each country's variables throughout the 21st century. 
+As observed, the years that we will be using for this analysis are from 2000 to 2020, giving us a comprehensive analysis of each country's variables throughout the 21st century. 
 
 ## 1.2 Prepare the data
 
@@ -131,7 +131,7 @@ transformed_usa <- transform_data(data_usa)
 
 ```
 
-TODO Description why we droped the data after 2019
+After analyzing the data, we decided to omit the information from 2020 onwards. The Covid pandemic in 2020 significantly disrupted global economic patterns, causing unprecedented fluctuations in GDP, CPI, and Stock Market Indices. The widespread lockdowns, supply chain disruptions, and shifts in consumer behavior during the pandemic created outliers in the data that could skew our analysis and adversely affect the accuracy of our forecasts.
 
 ## 1.3 Visual inspection of the data, including Seasonality
 
@@ -171,7 +171,7 @@ plot_and_zoom(transformed_italy$gdp, 'GDP', 'Italy', 4)
 
 ```
 
-Looking at the graph of Italy's GDP from the last 23 years, we can make some observations. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2023, with a sharp dip in 2020. The two interruptions in the trend correspond to the 2008 financial crisis and the 2020 Coronavirus Pandemic, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy's economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as "aging population, inflation, stagnation, and the impact of globalization on trade and demand" affected heavily the country's development and economic growth (Ardeni & Gallegati, 2023). Italy's development is slow mainly when compared to other countries European countries with similar capabilities and factors. In the zoomed version of Italy's GDP, we can observe another factor. The plot shows a clear trend or pattern of seasonality, wherein in the first part of the year we observe a slight increase in the GDP, followed by a sharper increase in the second part of the year, and this is observed in all of the years included.
+We can make some observations by looking at the graph of Italy's GDP from 2000 - 2020. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2020. The interruption in the trend corresponds to the 2008 financial crisis, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy's economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as "aging population, inflation, stagnation, and the impact of globalization on trade and demand" heavily affected the country's development and economic growth (Ardeni & Gallegati, 2023). Italy's development is slow mainly when compared to other countries European countries with similar capabilities and factors. We can observe another factor in the zoomed version of Italy's GDP. The plot shows a clear trend or pattern of seasonality, wherein in the first part of the year we observe a slight increase in the GDP, followed by a sharper increase in the second part of the year, and this is observed in all of the years included.
 
 ```{r plot cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -181,7 +181,7 @@ plot_and_zoom(transformed_italy$cpi, 'CPI', 'Italy', 4)
 
 ```
 
-Italy’s CPI has seen a similar path to the GDP. From 2000 onwards, Italy's Consumer Price Index (CPI) has undergone fluctuations influenced by various economic factors. In the early 2000s, the CPI experienced constant growth, which continued until 2012, when it began to slow down and reduce the growth rate. This might be the consequence on the financial crisis, combined with internal economic and political issues. In 2022, the CPI had an immense surge, a consequence of consumer habits returning to the norm after the 2020 pandemic, which again follows what can be observed in the GDP. The zoomed plot also reveals seasonality, as we can observe dips in the CPI in the first part of each year for all of the observed periods. This could be attributed to high spending seasons of the year, as it usually is found in most CPI plots, such as holidays. 
+Italy’s CPI has seen a similar path to the GDP. From 2000 onwards, Italy's Consumer Price Index (CPI) has undergone fluctuations influenced by various economic factors. In the early 2000s, the CPI experienced constant growth, which continued until 2012, when it began to slow down and reduce the growth rate. This might be the consequence on the financial crisis, combined with internal economic and political issues. The zoomed plot also reveals seasonality, as we can observe dips in the CPI in the first part of each year for all of the observed periods. This could be attributed to high spending seasons of the year, as it usually is found in most CPI plots, such as holidays. 
 
 ```{r plot stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -190,7 +190,7 @@ plot_and_zoom(transformed_italy$stocks, 'Stocks', 'Italy', 4)
 
 ```
 
-The Stock Market Index for Italy is very different from the previous charts and datasets. As observed, the market had many fluctuations throughout the last 23 years. We can observe that from 2000 to 2003, Italy’s stock market had a steep decline, followed by a rapid growth period that was again stopped by the financial crisis of 2008-2009. The index maintained high volatility for the following period, with short periods of growth or decline, but with an overall positive growth trend. Again, most of the behavior of the market is related to political decisions that the Italian government has made and external economic factors influencing investor confidence. Notably, the stock market showed increased volatility during times of political unpredictability or changes in governmental policy. Furthermore, the overall state of the world economy, particularly the Eurozone crisis, had a big impact on how the Italian stock market developed (Codogno & Galli, 2022). 
+The Stock Market Index for Italy is very different from the previous charts and datasets. As observed, the market had many fluctuations throughout the 2000 - 2020 period. We can observe that from 2000 to 2003, Italy’s stock market had a steep decline, followed by a rapid growth period that was again stopped by the financial crisis of 2008-2009. The index maintained high volatility for the following period, with short periods of growth or decline, but with an overall positive growth trend. Again, most of the behavior of the market is related to political decisions that the Italian government has made and external economic factors influencing investor confidence. Notably, the stock market showed increased volatility during times of political unpredictability or changes in governmental policy. Furthermore, the overall state of the world economy, particularly the Eurozone crisis, had a big impact on how the Italian stock market developed (Codogno & Galli, 2022). 
 
 ```{r plot gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -199,7 +199,7 @@ plot_and_zoom(transformed_usa$gdp, 'GDP', 'USA', 4)
 
 ```
 
-In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There are two specific moments where we see interruptions in the growth, which are in 2008 and 2020, which correspond to the Financial Crisis and the Coronavirus Pandemic. After both of these periods, we can observe that the GDP grew at a faster rate, especially after 2020. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or the zoomed plot. Moreover, it can be observed that the GDP for USA is significantly higher than Italy’s, mostly as a result of the US doing more business abroad and having a bigger economy. The USA's economy is stronger than Italy's due in part to their larger corporations, advancements in technology, and international trading practices.  
+In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There is a specific moment where we see an interruption in the growth, which is in 2008, corresponding to the Financial Crisis. After this period, we can observe that the GDP grew at a faster rate. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or the zoomed plot. Moreover, it can be observed that the GDP for USA is significantly higher than Italy’s, mostly as a result of the US doing more business abroad and having a bigger economy. The USA's economy is stronger than Italy's due in part to their larger corporations, advancements in technology, and international trading practices.  
 
 ```{r plot cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -208,7 +208,7 @@ plot_and_zoom(transformed_usa$cpi, 'CPI', 'USA', 4)
 
 ```
 
-USA’s CPI follows a very positive trend, with a continuous growth throughout the 23 year period. We can observe certain moments of slowdown, specifically after the 2008 financial crisis, but even with this, the CPI is constantly growing, at a somewhat slowrer rate. No seasonality or specific pattern can be observed in the plot or in the zoomed plot. This upward trend points to an economy that is typically growing and stable, with rare setbacks like the financial crisis eventually being resolved. These variations in the growth rate could also be a sign of the economy's resiliency and capacity to bounce back from setbacks, which would explain the CPI's general upward tendency.
+The USA’s CPI follows a very positive trend, with continuous growth throughout the period observed. We can observe certain moments of slowdown, specifically after the 2008 financial crisis, but even with this, the CPI is constantly growing, at a somewhat slow rate. No seasonality or specific pattern can be observed in the plot or the zoomed plot. This upward trend points to an economy that is typically growing and stable, with rare setbacks like the financial crisis eventually being resolved. These variations in the growth rate could also be a sign of the economy's resiliency and capacity to bounce back from setbacks, which would explain the CPI's general upward tendency.
 
 ```{r plot stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
