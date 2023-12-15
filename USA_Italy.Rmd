@@ -301,6 +301,8 @@ analyze_time_series(transformed_italy$cpi, "Italy", 'CPI')
 
 In our financial analysis of Italy's Consumer Price Index (CPI), the Autocorrelation Function (ACF) showed a gradual decline, especially at lag 19. This hints at weakening correlations over time. Looking ahead, we expect a noticeable spike in the Partial Autocorrelation Function (PACF), reflecting the declining ACF trend. The confidence intervals of -0.1 and 0.1 add statistical weight to these correlations. This info helps us predict a significant positive spike in the PACF, offering valuable insights for future forecasting and decisions.
 
+TODO Description like in GDP Italy
+
 ```{r differenced cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Explore cpi of Italy
@@ -310,6 +312,7 @@ analyze_diff_series(transformed_italy$cpi, "Italy", 'CPI')
 
 In the analysis of Italy's Consumer Price Index, the Augmented Dickey-Fuller (ADF) test yielded a p-value of 0.0235, and the Phillips-Perron (PP) test produced a p-value of 0.01. These results indicate statistical significance, suggesting that the CPI series is likely stationary without the need for differencing (the number of differences required for stationarity is 0). In conclusion, the CPI data for Italy appears to show stationarity, which is a crucial characteristic for time series analysis, making it more suitable for reliable statistical modeling and forecasting.
 
+TODO Description like in GDP Italy
 
 ```{r evaluate stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -319,7 +322,7 @@ analyze_time_series(transformed_italy$stocks, "Italy", 'Stocks')
 
 ```
 
-TODO Description
+TODO Description like in GDP Italy
 
 ```{r differenced stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -328,7 +331,7 @@ analyze_diff_series(transformed_italy$stocks, "Italy", 'Stocks')
 
 ```
 
-TODO Description
+TODO Description like in GDP Italy
 
 ## 1.4 Evaluate the data from USA
 
@@ -339,7 +342,7 @@ analyze_time_series(transformed_usa$gdp, "USA", 'GDP')
 
 ```
 
-TODO Description
+TODO Description like in GDP Italy
 
 ```{r differenced gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -349,9 +352,9 @@ analyze_diff_series(diff(transformed_usa$gdp), "USA", 'GDP', 4)
 
 ```
 
-Indication of a drift or linear trend that is not diffenced (no clue why)
+Indication of a drift or linear trend that is not diffenced (no clue why), TODO Yannik
 
-TODO Description
+TODO Description like in GDP Italy
 
 ```{r evaluate cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -360,7 +363,7 @@ analyze_time_series(transformed_usa$cpi, "USA", 'CPI')
 
 ```
 
-TODO Description
+TODO Description like in GDP Italy
 
 ```{r differenced cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -369,7 +372,7 @@ analyze_diff_series(transformed_usa$cpi, "USA", 'CPI')
 
 ```
 
-TODO Description
+TODO Description like in GDP Italy
 
 ```{r evaluate stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -378,7 +381,7 @@ analyze_time_series(transformed_usa$stocks, "USA", 'Stocks')
 
 ```
 
-TODO Description
+TODO Description like in GDP Italy
 
 ```{r differenced stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -387,11 +390,11 @@ analyze_diff_series(transformed_usa$stocks, "USA", 'Stocks')
 
 ```
 
-TODO Description
+TODO Description like in GDP Italy
 
 ## 1.5 Volatility clustering
 
-TODO? Is that it?
+QUESTION? Is that it?
 
 ```{r volatility clustering italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -424,16 +427,13 @@ plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'GDP')
 ```
 
 
-TODO Descripiton
-
 ```{r volatility clustering italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
 plot_volatility_clusters(transformed_italy$cpi, 'Italy', 'CPI')
 
 ```
-TODO Heteroskedasticity so should we use GARCH or use log or maybe box cox?
-TODO Descripiton
+QUESTION Heteroskedasticity so should we use GARCH or use log or maybe box cox?
 
 ```{r volatility clustering italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -441,8 +441,6 @@ TODO Descripiton
 plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks')
 
 ```
-
-TODO Descripiton, clustering
 
 ```{r volatility clustering usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -452,8 +450,6 @@ plot_volatility_clusters(transformed_usa$gdp, 'USA','GDP')
 
 ```
 
-TODO Descripiton, clustering?
-
 ```{r volatility clustering usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
@@ -461,7 +457,7 @@ plot_volatility_clusters(transformed_usa$cpi, 'USA', 'CPI', 10)
 
 ```
 
-TODO Descripiton
+
 
 ```{r volatility clustering usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -470,7 +466,7 @@ plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 100)
 
 ```
 
-TODO Descripiton
+
 
 <br>
 
@@ -525,8 +521,6 @@ print(split_italy$gdp_train)
 Had for some reason huge troubles with it sting in ts so needed to create this
 
 ```{r train test split alternative, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-# TODO Do we want to use this or the one above?
-
 # Function for train test split
 train_test_split <- function(data_list, train_percentage = 0.8) {
   split_data <- list()
@@ -647,7 +641,7 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 TO WE NEED THIS REALLY OR DO WE NOT USE IT? QUESTIONHERE3
 ```{r TODO model automation, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# TODO DO WE WANT TO USE THIS? 
+# QUESTION DO WE WANT TO USE THIS? 
 
 create_models <- function(p, d, q, train_data, test_data) {
   results <- data.frame(order = character(),
