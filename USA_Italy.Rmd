@@ -33,21 +33,17 @@ For the final project of Advanced Data Analytics, we decided to analyze three va
 
 -   Visual inspection of data and season, trend DONE, including desriptions
 
-Steps for us:
-
 -   Stationarity testing DONE
 
 -   Inspect autocorrelation with acf and pacf DONE
 
--   Inspect volatility clustering (if so, maybe GARCH needed?)
+Steps for us:
 
--   if it has season use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other
+-   Inspect volatility clustering (if so, maybe GARCH needed?) DONE
 
--   Maybe new autocorrelation with acf and pacf for the estimated seasonality and trend (if we use the holt winter model to mode arima)
+-   if it has season use holt-winters, DO WE NEED TBATS or STLM? Because I dont think whe have two cicles in each other # DONE
 
 -   Look for ARIMA models (on data and on estimated ets()/msts()
-
--   Identify the seasonal model by analyzing the seasonal coefficients of the ACF and PACF
 
 -   Identify the regular component by exploring the ACF and PACF of the residuals of the seasonal model.
 
@@ -72,7 +68,7 @@ Steps for us:
 # import packages
 library(pacman)
 p_load(
-  readxl, tseries, tidyverse, dplyr, tidyr, forecast, fpp2, stats, quantmod, zoo, lubridate, ggplot2, cowplot
+  readxl, tseries, tidyverse, dplyr, tidyr, forecast, fpp2, stats, quantmod, zoo, lubridate, ggplot2, cowplot, rugarch
 )
 
 # import data set xlxs
@@ -323,8 +319,6 @@ analyze_diff_series(transformed_italy$stocks, "Italy", 'Stocks')
 
 After using the recommended number of differences (1) on Italy's stock data the Augmented Dickey-Fuller (ADF) test suggested stationarity, as well as no further differencing is recommended. 
 
-## 1.4 Evaluate the data from USA
-
 ```{r evaluate gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore gdp of USA
@@ -411,7 +405,7 @@ plot_volatility_clusters <- function(time_series, country, variable, uper = 0) {
 }
 
 # Plotting the volatility clustering 
-plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 200)
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 150)
 ```
 
 TODO discribe clusters in financial data (existece, why important and GARCH)
@@ -585,12 +579,16 @@ plot_forecast(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, country = 
 
 ```
 
+TODO dsicription of the plot, the foreccast only with trend and season is good stron influence in general and little other infromation? No clue what else
+
 ```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = "Italy", variable = "CPI", alpha = 0.7, 'AAA')
 
 
 ```
+
+TODO description of plot and what it means
 
 ## 2.3 ARIMA
 
@@ -720,13 +718,13 @@ plot_residuals_arima <- function(model, country, variable){
   par(mfrow = c(1, 2), mar = c(3, 4, 4, 1))
 
   # ACF and PACF plots
-  acf(model$residuals, main = paste("ACF of", variable, "in", country))
-  pacf(model$residuals, main = paste("PACF of", variable, "in", country))
+  acf(model$residuals, main = paste("ACF of", variable, "residuals in", country))
+  pacf(model$residuals, main = paste("PACF of", variable, "residuals in", country))
 }
 
 
 # Plot the best model TODO Yannik maybe in tow seperate parts?
-plot_residuals_arima(model_bic_i_gdp, "Italy", "GDP")
+plot_residuals_arima(model_aic_i_gdp, "Italy", "GDP")
 
 ```
 
@@ -766,8 +764,6 @@ TODO Discription of good forcast
 
 ### 2.3.1 CPI Italy
 
-QUESTION Heteroskedasticity so should we use GARCH or use log or maybe box cox? look at residuals
-
 ```{r modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # TODO maybe look at seasonal self composed once?
@@ -785,6 +781,10 @@ evaluate_arima_models(model_list, cpi_italy_test)
 
 ```
 
+TODO description why which model and evaluation
+- first max significant lags 
+-Other auto arma with differen IC
+
 ```{r plot residual italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot the residuals of the best model
@@ -792,17 +792,148 @@ plot_residuals_arima(model_bic_i_cpi, "Italy", "CPI")
 
 ```
 
-```{r garch model italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+TODO Discribe, there are violations so other model maybe GARCH
 
-# TODO maybe GARCH? Yannik
+```{r squared residuals italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+plot_squared_residuals <- function(residuals, country, variable, uper = 0) {
+  
+  # Calculate the squared returns
+  squared_residuals <- (residuals)^2
+  
+  if (uper == 0) {
+    uper <- max(squared_residuals) + max(squared_residuals)*0.05
+  }
+
+  # Create the line plot
+  ggplot(data.frame(time = time(squared_residuals), value = squared_residuals), aes(x=time,y=value))  +
+    geom_segment(aes(xend = time, yend = 0)) +
+    labs(title = paste("Squared residuals of", variable, 'in', country),
+         x = "Time",
+         y = "Squared residuals") + 
+    theme_minimal() +
+    theme(panel.grid.minor = element_blank(),
+      plot.title = element_text(size = 12, face = "bold", hjust = 0.5)) +
+    scale_y_continuous(limits = c(0, uper))
+
+}
+
+plot_squared_residuals(model_bic_i_cpi$residuals, "Italy", "CPI", 1)
+
 ```
+
+TODO Discribe the plot, squared residuals have clusters (?) so GARCH
+
+```{r squared residuals (P)ACF italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+
+plot_sqr_residuals_arima <- function(model, country, variable){ 
+  
+  # Set up the plot
+  par(mfrow = c(1, 2), mar = c(3, 4, 4, 1))
+
+  # ACF and PACF plots
+  acf((model$residuals)^2, main = paste("ACF of", variable, "squared residuals in", country))
+  pacf((model$residuals)^2, main = paste("PACF of", variable, "squared residuals in", country))
+}
+
+
+# Plot the best model TODO Yannik maybe in tow seperate parts?
+plot_sqr_residuals_arima(model_bic_i_cpi, "Italy", "GDP")
+
+```
+
+TODO Discribe ACF gives ARCH(p) and PACF gives q in GARCH(p,q)
+
+QUESTION HOW THE FUCK DO I DO THIS?
+
+```{r garch italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+evaluate_garch_models <- function(models) {
+  
+  results <- data.frame(Model = character(), AIC = numeric(), BIC = numeric(), Residuals = character())
+  
+  for (i in seq_along(models)) {
+    
+    model <- models[[i]]
+    
+    garch_info <- infocriteria(model)
+    
+    # Extract AIC and SIC
+    aic <-  garch_info[1]
+    bic <-  garch_info[2]
+    
+    # Check residuals for white noise
+    white_noise <- Box.test(residuals(model), lag = 20, type = "Ljung-Box")$p.value > 0.05
+    residuals_check <- ifelse(white_noise, "White Noise", "Not White Noise")
+
+    # Append results to the data frame
+    name <- paste("Model", i)
+    result_row <- data.frame(Model = name, AIC = aic, BIC = bic, Residuals = residuals_check)
+    results <- rbind(results, result_row)
+  }
+  
+  return(results)
+}
+
+# Example usage with a single GARCH model
+a1 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 0)), distribution.model = "std"), data = cpi_italy_train)
+a2 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(2, 0)), distribution.model = "std"), data = cpi_italy_train)
+a3 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(3, 0)), distribution.model = "std"), data = cpi_italy_train)
+a4 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(4, 0)), distribution.model = "std"), data = cpi_italy_train)
+a5 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(5, 0)), distribution.model = "std"), data = cpi_italy_train)
+a6 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(6, 0)), distribution.model = "std"), data = cpi_italy_train)
+a7 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(7, 0)), distribution.model = "std"), data = cpi_italy_train)
+a8 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(8, 0)), distribution.model = "std"), data = cpi_italy_train)
+a9 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(9, 0)), distribution.model = "std"), data = cpi_italy_train)
+g1 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 1)), distribution.model = "std"), data = cpi_italy_train)
+g2 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(2, 2)), distribution.model = "std"), data = cpi_italy_train)
+
+
+
+model_list_garch <- list(a1, a2, a3, a4, a5, a6, a7, a8, a9, g1, g2)
+
+evaluate_garch_models(model_list_garch)
+
+```
+
+TODO Discribe, mntion combination possible but nto done
+
 
 ```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot the forecast
-#plot_forecast_arima(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", )# GARCH OR COMBINATION?) TODO
+plot_forecast_garch <- function(train_data, test_data, ts_data, country, variable, model) {
+  ntest <- length(test_data)
+  forecast_values <- ugarchforecast(model, n.ahead = length(test_data))
+  forecast_series <- forecast_values@forecast$seriesFor
+  
+  pred_garch <- c(model@fit$fitted.values, forecast_series)
+
+  # Extract the last date of the training data
+  last_date_train <- tail(time(train_data), 1)
+  
+  ggplot(data.frame(time = time(ts_data), value = ts_data, pred_arima = pred_garch)) + 
+    geom_line(aes(x = time, y = value, group = 1)) +
+    geom_line(aes(x = time, y = pred_garch, group = 1), color = 'darkgreen', size=0.75) +
+    geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkblue", size = 0.9) +
+    xlab("Year") +
+    ylab(paste(variable, "in", country)) +
+    labs(title = paste("Forecast for", variable, "in", country),
+         caption = "Vertical line represents the last date of the training data") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+          plot.subtitle = element_text(size = 10, hjust = 0.5),
+          plot.caption = element_text(size = 6))
+}
+
+
+plot_forecast_garch(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", a7)
 
 ```
+
+QUESTOION Why does it not work?
+
+
 
 ### 2.3.1 Stocks Italy
 
