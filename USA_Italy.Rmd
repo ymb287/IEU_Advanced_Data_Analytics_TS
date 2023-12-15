@@ -325,8 +325,6 @@ After using the recommended number of differences (1) on Italy's stock data the 
 
 ## 1.4 Evaluate the data from USA
 
-TODO Yannik
-
 ```{r evaluate gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore gdp of USA
@@ -334,7 +332,7 @@ analyze_time_series(transformed_usa$gdp, "USA", 'GDP')
 
 ```
 
-For USA GDP data the Augmented Dickey-Fuller (ADF) test suggested the need for (1) difference of the data, as it has a p value of 0.8173736 suggesting evidence against stationarity.
+For USA GDP data the ADF test suggested with a p-value of 0.82 non-stationarity. Also taking one difference is recommended. The ACF shows a slow decline and since the PACF has a steep drop at lag 1, the model will probably be an AR(1). This will be tested in the modeling part.
 
 ```{r differenced gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -346,7 +344,7 @@ analyze_diff_series(diff(transformed_usa$gdp), "USA", 'GDP')
 
 Indication of a drift or linear trend that is not diffenced (no clue why), TODO Yannik
 
-After using the recommended number of differences (1) on USA GDP the Augmented Dickey-Fuller (ADF) test suggested evidence against stationarity (p = 0.1222529 ), as well as no further differencing. Since this is not completely stationary using the knowledge from the plotted data the seasonal component was added. In the seasonal scenario (season = 4), the ADF test provided strong evidence for stationarity (p = 0.01). This suggests using one difference in the modeling part, as well as including a seasonal component with a lag of 4.
+After using the recommended number of differences (1) on USA GDP the Augmented Dickey-Fuller (ADF) test suggested evidence against stationarity with a p- value of 0.12, as well as no further differencing. Since this is not completely stationary it was differenced once more and then the ADF test provided strong evidence for stationarity. This suggests using one difference in the modeling part, and inlcuding a drift.
 
 ```{r evaluate cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -355,7 +353,7 @@ analyze_time_series(transformed_usa$cpi, "USA", 'CPI')
 
 ```
 
-For USA cpi data the Augmented Dickey-Fuller (ADF) test suggested the need for (1) difference of the data, as it has a p value of 0. 0.6018541 suggesting evidence against stationarity.
+For USA cpi data the ADF test has a p-value of 0. 0.60 suggesting non-stationarity. Also taking one difference is recommended. The ACF shows a slow decline and since the PACF has a steep drop at lag 1, the model will probably be an AR(1). This will be tested in the modeling part.
 
 ```{r differenced cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -364,7 +362,7 @@ analyze_diff_series(transformed_usa$cpi, "USA", 'CPI')
 
 ```
 
-After using the recommended number of differences (1) on USA cpi the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.01 ), as well as no further differencing. Since this is  completely stationary using the knowledge from the plotted data no seasonal component was added
+After using the recommended number of differences on USA cpi the Augmented Dickey-Fuller (ADF) test rejects the H0 hypothesis, and suggests stationary. This suggests using one difference in the modeling part.
 
 ```{r evaluate stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -373,7 +371,7 @@ analyze_time_series(transformed_usa$stocks, "USA", 'Stocks')
 
 ```
 
-For USA stock data the Augmented Dickey-Fuller (ADF) test suggested the need for (1) difference of the data, as it has a p value of 0.  0.4115169 suggesting evidence against stationarity.
+For USA stock data the Augmented Dickey-Fuller test has a p-value of 0.  0.41. The ACF shows a slow decline and  the PACF has a steep drop at lag 1 and a probable violation at lag 6.
 
 ```{r differenced stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -382,7 +380,7 @@ analyze_diff_series(transformed_usa$stocks, "USA", 'Stocks')
 
 ```
 
-After using the recommended number of differences (1) on USA stock the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.01 ), as well as no further differencing. Since this is  completely stationary using the knowledge from the plotted data no seasonal component was added
+After using the recommended number of differences on USA stock the Augmented Dickey-Fuller test suggests stationarity. Also no further differencing is recommended.
 
 ## 1.5 Volatility clustering
 
