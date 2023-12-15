@@ -762,7 +762,7 @@ plot_forecast_arima <- function(train_data, test_data, ts_data, country, variabl
 plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Italy", "GDP", model_bic_i_gdp)
 ```
 
-TODO Discription of good forcast
+As observed in the plot, the forecast we achieved with this model is the most accurate one, and it is by using the ARIMA. The predicted or forecasted plot follows with a very small range of difference from the real line, confirming the model's accuracy.
 
 ### 2.3.1 CPI Italy
 
