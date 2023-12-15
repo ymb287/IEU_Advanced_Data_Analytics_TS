@@ -287,10 +287,10 @@ analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP', 4)
 
 ```
 
-After using the recomended number of differences (1) on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.0675), as well as no further differencing. Since this is not compleatly stationary using the knowledge from the ploted data the seasonal component was added. In the seasonal scenario (season = 4), the ADF test provided strong evidence for stationarity (p = 0.01). This suggests to use one difference in the modeling part, as well as including a seasonal componant with a lag of 4.
+After using the recommended number of differences (1) on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.0675), as well as no further differencing. Since this is not completely stationary using the knowledge from the plotted data the seasonal component was added. In the seasonal scenario (season = 4), the ADF test provided strong evidence for stationarity (p = 0.01). This suggests using one difference in the modeling part, as well as including a seasonal component with a lag of 4.
+#model description
 
 
-# TOOD after this not checked the descrptions, style like above is good
 
 ```{r evaluate cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -299,9 +299,9 @@ analyze_time_series(transformed_italy$cpi, "Italy", 'CPI')
 
 ```
 
-In our financial analysis of Italy's Consumer Price Index (CPI), the Autocorrelation Function (ACF) showed a gradual decline, especially at lag 19. This hints at weakening correlations over time. Looking ahead, we expect a noticeable spike in the Partial Autocorrelation Function (PACF), reflecting the declining ACF trend. The confidence intervals of -0.1 and 0.1 add statistical weight to these correlations. This info helps us predict a significant positive spike in the PACF, offering valuable insights for future forecasting and decisions.
+Italy's CPI the Augmented Dickey-Fuller (ADF) test suggested the need for (1) difference of the data, as it has a p value of 0.9505348 suggesting evidence against stationarity.
 
-TODO Description like in GDP Italy
+
 
 ```{r differenced cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -310,9 +310,9 @@ analyze_diff_series(transformed_italy$cpi, "Italy", 'CPI')
 
 ```
 
-In the analysis of Italy's Consumer Price Index, the Augmented Dickey-Fuller (ADF) test yielded a p-value of 0.0235, and the Phillips-Perron (PP) test produced a p-value of 0.01. These results indicate statistical significance, suggesting that the CPI series is likely stationary without the need for differencing (the number of differences required for stationarity is 0). In conclusion, the CPI data for Italy appears to show stationarity, which is a crucial characteristic for time series analysis, making it more suitable for reliable statistical modeling and forecasting.
+After using the recommended number of differences (1) on Italy's CPI the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.01 ), as well as no further differencing. Since this is  completely stationary using the knowledge from the plotted data no seasonal component was added. 
 
-TODO Description like in GDP Italy
+
 
 ```{r evaluate stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
