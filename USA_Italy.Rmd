@@ -414,12 +414,17 @@ plot_volatility_clusters <- function(time_series, country, variable, uper = 0) {
 plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 200)
 ```
 
+TODO discribe clusters in financial data (existece, why important and GARCH)
+
 ```{r volatility clustering usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
 plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 50)
 
 ```
+
+TODO discribe clusters in financial data (existece, why important and GARCH)
+
 
 <br>
 
@@ -544,9 +549,7 @@ stocks_usa_test <- split_usa$stocks_test
 
 ```
 
-## 2.2 Trend and Seasonality with holt???
-
-Only for Italy gdp and cpi, or should we put this after the visual inspection? TODO
+## 2.2 Trend and Seasonality with holt??? TODO
 
 ```{r stationarity italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -590,8 +593,6 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 ```
 
 ## 2.3 ARIMA
-
-TODO should we do combined arch garch? is thata worth it for every or for which?
 
 TO WE NEED THIS REALLY OR DO WE NOT USE IT? QUESTIONHERE3
 
@@ -792,7 +793,8 @@ plot_residuals_arima(model_bic_i_cpi, "Italy", "CPI")
 ```
 
 ```{r garch model italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-# Trying other models (GARCH?)
+
+# TODO maybe GARCH? Yannik
 ```
 
 ```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -806,7 +808,7 @@ plot_residuals_arima(model_bic_i_cpi, "Italy", "CPI")
 
 ```{r modelling italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# TODO maybe directly GARCH?
+# TODO maybe directly GARCH Yannik
 
 # Creating different models
 model_min_i_stocks <- forecast::Arima(stocks_italy_train, order = c(2, 1, 0)) 
@@ -820,8 +822,6 @@ model_list <- list(model_min_i_stocks, model_aic_i_stocks, model_bic_i_stocks)
 evaluate_arima_models(model_list, stocks_italy_test)
 
 ```
-
-TODO this looks super bad doesnt it? So GARCH needed but WHY? not visible in the plots was it?
 
 ### 2.3.1 GDP USA
 
