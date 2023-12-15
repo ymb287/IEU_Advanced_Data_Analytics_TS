@@ -31,9 +31,11 @@ For the final project of Advanced Data Analytics, we decided to analyze three va
 
 # Part 1: Prepare and inspect the data
 
+-   Visual inspection of data and season, trend DONE, including desriptions
+
+
 Steps for us:
 
--   Visual inspection of data and season, trend DONE
 
 -   Stationarity testing DONE
 
@@ -135,8 +137,6 @@ After analyzing the data, we decided to omit the information from 2020 onwards. 
 
 ## 1.3 Visual inspection of the data, including Seasonality
 
-QUESTIONHERE1:
-
 ```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Create a function for visualization.
@@ -171,7 +171,7 @@ plot_and_zoom(transformed_italy$gdp, 'GDP', 'Italy', 4)
 
 ```
 
-We can make some observations by looking at the graph of Italy's GDP from 2000 - 2020. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2020. The interruption in the trend corresponds to the 2008 financial crisis, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy's economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as "aging population, inflation, stagnation, and the impact of globalization on trade and demand" heavily affected the country's development and economic growth (Ardeni & Gallegati, 2023). Italy's development is slow mainly when compared to other countries European countries with similar capabilities and factors. We can observe another factor in the zoomed version of Italy's GDP. The plot shows a clear trend or pattern of seasonality, wherein in the first part of the year we observe a slight increase in the GDP, followed by a sharper increase in the second part of the year, and this is observed in all of the years included.
+We can make some observations by looking at the graph of Italy's GDP from 2000 - 2020. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2020. The interruption in the trend corresponds to the 2008 financial crisis, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy's economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as "aging population, inflation, stagnation, and the impact of globalization on trade and demand" heavily affected the country's development and economic growth (Ardeni & Gallegati, 2023). Italy's development is slow mainly when compared to other countries European countries with similar capabilities and factors. We can observe another factor in the zoomed version of Italy's GDP. The plot shows a clear trend or pattern of seasonality, wherein in the first part of the year we observe a slight increase in the GDP, followed by a sharper increase in the second part of the year, and this is observed in all of the years included. This could be attributed to factors such as traditional vacation patterns, tourism peaks, or specific industry behaviors.
 
 ```{r plot cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -227,16 +227,13 @@ The Stock Market index for the USA different from what we observed in Italy, sho
 analyze_time_series <- function(ts_data, country, variable) {
 
   # Doing the ADF and PP test, as well as determining diff
-  adf_result <- adf.test(ts_data)
-  pp_result <- pp.test(ts_data)
+  adf_result <- tseries::adf.test(ts_data)
   num_diffs <- ndiffs(ts_data)
 
   # Print results for the current variable
   cat("Results for", variable, "in", country, ":\n")
   cat("ADF Test:\n")
   cat("  P-Value:", adf_result$p.value, "\n")
-  cat("PP Test:\n")
-  cat("  P-Value:", pp_result$p.value, "\n")
   cat("Number of Differences Required for Stationarity:", num_diffs, "\n\n")
   
   # Set up the plot
@@ -252,12 +249,13 @@ analyze_time_series(transformed_italy$gdp, "Italy", 'GDP')
 
 ```
 
-In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed significant correlations within confidence intervals of -0.2 and 0.2. Strikingly, 19 lags exceeded the upper limit, suggesting prolonged positive correlations with an estimated AR 1. We anticipate a sharp decline in the Partial Autocorrelation Function (PACF). This hints at an upcoming substantial shift in Italy's GDP dynamics, providing valuable insights for forecasting and strategic decision-making
+In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed 19 significant lags, as well as the before seans seasonal pattern. Due to the slow decline we might conclude that it is an AR model. This is further supported due to the steap decline in the Partial Autocorrelation Function (PACF) after the fifth lag. Also the Model will probably include a seasonal component. The Augmented Dickey-Fuller (ADF) test has a p- value of 0.26, which is more than 0.05, indicating that the data is non-stationary. The number of differences required for stationarity is 1. 
+
 
 ```{r differenced gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Analyse the differenced variables for stationary
-analyze_diff_series <- function(ts_data, country, variable) {
+analyze_diff_series <- function(ts_data, country, variable, seasonal = 0) {
   
   # Getting number of differences required for stationarity
   num_diffs <- ndiffs(ts_data)
@@ -267,28 +265,32 @@ analyze_diff_series <- function(ts_data, country, variable) {
     ts_data <- diff(ts_data)
   }
   
+  if (seasonal != 0){
+    ts_data <- diff(ts_data, lag = seasonal)
+  }
+  
   # Performing the ADF and PP test
-  adf_result <- adf.test(ts_data)
-  pp_result <- pp.test(ts_data)
+  adf_result <- tseries::adf.test(ts_data)
   num_diffs_new <- ndiffs(ts_data)
   
   # Print results for the current variable
-  cat("Results for", variable, "in", country, ":\n")
+  cat("Results for", variable, "in", country, "with season", seasonal, ":\n")
   cat("ADF Test:\n")
   cat("  P-Value:", adf_result$p.value, "\n")
-  cat("PP Test:\n")
-  cat("  P-Value:", pp_result$p.value, "\n")
   cat("Number of Differences Required for Stationarity:", num_diffs_new, "\n\n")
 
 }
 
 # Difference data from Italy
 analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP')
+analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP', 4)
 
 ```
 
-In examining the differenced variables for stationarity using the provided R code, the focus is on Italy's Gross Domestic Product (GDP). The Augmented Dickey-Fuller (ADF) test yielded a p-value of 0.0148, while the Phillips-Perron (PP) test resulted in a p-value of 0.01. These outcomes suggest statistical significance, indicating that the differenced GDP series is likely stationary. It's important to note that, unlike the Consumer Price Index (CPI) previously analyzed, the GDP data required a certain number of differences for achieving stationarity (in this case, 0 differences). This specific detail highlights the distinct characteristics of economic variables and their treatment in time series analysis. The achieved stationarity through differencing enhances the reliability of statistical modeling, allowing for more dependable forecasting and strategic decision-making based on the transformed GDP data for Italy.
+After using the recomended number of differences (1) on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.0675), as well as no further differencing. Since this is not compleatly stationary using the knowledge from the ploted data the seasonal component was added. In the seasonal scenario (season = 4), the ADF test provided strong evidence for stationarity (p = 0.01). This suggests to use one difference in the modeling part, as well as including a seasonal componant with a lag of 4.
 
+
+# TOOD after this not checked the descrptions, style like above is good
 
 ```{r evaluate cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -343,8 +345,11 @@ TODO Description
 
 # Explore gdp of Italy
 analyze_diff_series(transformed_usa$gdp, "USA", 'GDP')
+analyze_diff_series(diff(transformed_usa$gdp), "USA", 'GDP', 4)
 
 ```
+
+Indication of a drift or linear trend that is not diffenced (no clue why)
 
 TODO Description
 
@@ -390,66 +395,69 @@ TODO? Is that it?
 
 ```{r volatility clustering italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
-plot_volatility_clusters <- function(time_series, variable, country,width = 4) {
+plot_volatility_clusters <- function(time_series, country, variable, uper = 0) {
   
-  # Calculate the rolling standard deviation
-  rolling_sd <- zoo::rollapply(time_series, FUN = sd, align = "center", width = width)
+  # Calculate the squared returns
+  time_series <- diff(time_series)^2
+  
+  if (uper == 0) {
+    uper <- max(time_series) + max(time_series)*0.05
+  }
 
-  # Assuming rolling_sd is already calculated
-  rolling_sd_data <- data.frame(Time = time(rolling_sd), RollingSD = coredata(rolling_sd))
-  
   # Create the line plot
-  ggplot(data = rolling_sd_data, aes(x = Time, y = RollingSD)) +
-    geom_line() +
-    labs(title = paste("Rolling Standard Deviation of", variable, 'in', country),
+  ggplot(data.frame(time = time(time_series), value = time_series), aes(x=time,y=value))  +
+    geom_segment(aes(xend = time, yend = 0)) +
+    labs(title = paste("Squared returns of", variable, 'in', country),
          x = "Time",
-         y = "Rolling Standard Deviation") + 
+         y = "Squared returns") + 
     theme_minimal() +
     theme(panel.grid.minor = element_blank(),
-      plot.title = element_text(size = 12, face = "bold", hjust = 0.5))
-    
+      plot.title = element_text(size = 12, face = "bold", hjust = 0.5)) +
+    scale_y_continuous(limits = c(0, uper))
+
 }
 
 # Plotting the volatility clustering 
-plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'GDP', 8) # TODO which width?
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'GDP')
 
 
 ```
+
 
 TODO Descripiton
 
 ```{r volatility clustering italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
-plot_volatility_clusters(transformed_italy$cpi, 'Italy', 'CPI', 8)
+plot_volatility_clusters(transformed_italy$cpi, 'Italy', 'CPI')
 
 ```
-
+TODO Heteroskedasticity so should we use GARCH or use log or maybe box cox?
 TODO Descripiton
 
 ```{r volatility clustering italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
-plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 8)
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks')
 
 ```
 
-TODO Descripiton
+TODO Descripiton, clustering
 
 ```{r volatility clustering usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
-plot_volatility_clusters(transformed_usa$gdp, 'USA','GDP', 8)
+plot_volatility_clusters(transformed_usa$gdp, 'USA','GDP')
 
 
 ```
 
-TODO Descripiton
+TODO Descripiton, clustering?
 
 ```{r volatility clustering usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
-plot_volatility_clusters(transformed_usa$cpi, 'USA', 'CPI', 8)
+plot_volatility_clusters(transformed_usa$cpi, 'USA', 'CPI', 10)
 
 ```
 
@@ -458,7 +466,7 @@ TODO Descripiton
 ```{r volatility clustering usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
-plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 8)
+plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 100)
 
 ```
 
@@ -476,7 +484,7 @@ TODO Descripiton
 
 ## 2.1 Train test split
 
-QUESTIONHERE2:
+QUESTIONHERE2: How should we split the data?
 
 ```{r train test split, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -593,8 +601,6 @@ stocks_usa_test <- split_usa$stocks_test
 
 Only for Italy gdp and cpi, or should we put this after the visual inspection? TODO
 
-QUESTIONHERE1:
-
 ```{r stationarity italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 
@@ -638,7 +644,7 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 
 ## 2.3 ARIMA
 
-### TO WE NEED THIS REALLY OR DO WE NOT USE IT? QUESTIONHERE3
+TO WE NEED THIS REALLY OR DO WE NOT USE IT? QUESTIONHERE3
 ```{r TODO model automation, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # TODO DO WE WANT TO USE THIS? 
@@ -780,8 +786,16 @@ plot_forecast_arima <- function(train_data, test_data, ts_data, country, variabl
           plot.caption = element_text(size = 6))
 }
 
+plot_residuals_arima <- function(model) { # QUESTION This is a good function to evaluate the residuals? and why is it white noise but ther are still iolations in the model_bic?
+  residuals <- model$residuals
+  acf(residuals, lag.max = 20, main = "ACF of Residuals")
+}
+
+
 # Plot the best model
 plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Italy", "GDP", model_bic)
+plot_residuals_arima(model_bic)
+# QUESTION why is it white nois adn there is still a violation?
 
 ```
 
@@ -802,8 +816,15 @@ model_list <- list(model_max, model_aic, model_bic)
 evaluate_arima_models(model_list, cpi_italy_test)
 
 ```  
+
+```{r plot model italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+# Trying other models (GARCH?)
+```  
+
+
+
 TODO HERE WE NEED TO LOOK INTO THE BEST MODELS BECAUSE IT IS NOT ONLY WHITE NOISE with 
-# Plot residuals
+Plot residuals
 plot(model_max$residuals)
 acf(model_aic$residuals)
 pacf(model_aic$residuals)
