@@ -311,7 +311,7 @@ analyze_time_series(transformed_italy$stocks, "Italy", 'Stocks')
 
 ```
 
-For Italy's stock data the Augmented Dickey-Fuller (ADF) test suggested the need for (1) difference of the data, as it has a p value of 0.4086553 suggesting evidence against stationarity.
+For Italy's stock data the ADF has a p-value of 0.41 suggesting nn-stationarity. Also it is recommended to difference once. The ACF shows a slow decline and since the PACF has a steep drop at lag 2, the model will probably be an AR(2). This will be tested in the modeling part.
 
 
 ```{r differenced stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -321,9 +321,11 @@ analyze_diff_series(transformed_italy$stocks, "Italy", 'Stocks')
 
 ```
 
-After using the recommended number of differences (1) on Italy's stock data the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.01 ), as well as no further differencing. Since this is  completely stationary using the knowledge from the plotted data no seasonal component was added
+After using the recommended number of differences (1) on Italy's stock data the Augmented Dickey-Fuller (ADF) test suggested stationarity, as well as no further differencing is recommended. 
 
 ## 1.4 Evaluate the data from USA
+
+TODO Yannik
 
 ```{r evaluate gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
