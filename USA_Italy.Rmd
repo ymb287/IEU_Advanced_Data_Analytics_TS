@@ -292,7 +292,7 @@ analyze_time_series(transformed_italy$cpi, "Italy", 'CPI')
 
 ```
 
-For Italy's CPI the Augmented Dickey-Fuller (ADF) test suggested the need for (1) difference of the data, as it has a p value of 0.9505348 suggesting evidence against stationarity.
+For Italy's CPI the ADF has a p-value of 0.95 suggesting evidence against stationarity. Also it is recommended to difference once. The ACF shows a slow decline and since the PACF has a steep drop at lag 1, as well as violations as 7 and 13, the model will probably have a bit focus on the AR part.
 
 ```{r differenced cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -301,7 +301,7 @@ analyze_diff_series(transformed_italy$cpi, "Italy", 'CPI')
 
 ```
 
-After using the recommended number of differences (1) on Italy's CPI the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.01 ), as well as no further differencing. Since this is completely stationary using the knowledge from the plotted data no seasonal component was added.
+After using the recommended number of differences (1) on Italy's CPI the Augmented Dickey-Fuller (ADF) test suggested  stationarity, as well as no further differencing.
 
 ```{r evaluate stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
