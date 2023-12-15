@@ -710,7 +710,8 @@ evaluate_arima_models(model_list, gdp_italy_test)
 
 ```
 
-TODO description why which model and evaluation - first max lags - second accounting fro season in ACF and substracting -Other auto arma with differen IC
+The ARIMA models we developed correspond to the following characteristics. The first function takes into consideration all the spikes of ACF and PACF and incorporates 9 autoregressive terms and 16 moving average terms, and overall uses the maximum lags. The second model uses seasonality as the main target for the modeling and tells us that it requires differencing for stationarity and for seasonal stationarity. The third uses as the parameter the lowest AIC, in this case, 334.4106, and the fourth model the lowest BIC, which was 341.2077. 
+
 
 ```{r plot residual italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
