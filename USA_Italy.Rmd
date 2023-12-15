@@ -249,7 +249,7 @@ analyze_time_series(transformed_italy$gdp, "Italy", 'GDP')
 
 ```
 
-In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed 19 significant lags, as well as the before seans seasonal pattern. Due to the slow decline we might conclude that it is an AR model. This is further supported due to the steap decline in the Partial Autocorrelation Function (PACF) after the fifth lag. Also the Model will probably include a seasonal component. The Augmented Dickey-Fuller (ADF) test has a p- value of 0.26, which is more than 0.05, indicating that the data is non-stationary. The number of differences required for stationarity is 1. 
+In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed over 15 significant lags, as well as the before seen seasonal pattern. Due to the slow decline we might conclude that it is an AR model. This is further supported due to the steep decline in the Partial Autocorrelation Function (PACF) after the fifth lag. Also the Model will probably include a seasonal component. Since is is quarterly and could already be seen in the plotted data. This might even reduce the PACF lags to 1. The Augmented Dickey-Fuller (ADF) test has a p-value of 0.26, which is more than 0.05, indicating that the data is non-stationary. The number of differences required for stationarity is 1. 
 
 
 ```{r differenced gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -287,7 +287,7 @@ analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP', 4)
 
 ```
 
-After using the recomended number of differences (1) on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity (p = 0.0675), as well as no further differencing. Since this is not compleatly stationary using the knowledge from the ploted data the seasonal component was added. In the seasonal scenario (season = 4), the ADF test provided strong evidence for stationarity (p = 0.01). This suggests to use one difference in the modeling part, as well as including a seasonal componant with a lag of 4.
+After using the recommended number of differences of 1 on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity with a p-value of 0.0675, as well as no further differencing. Since this is not completely stationary the 4th difference is take, because a seasonal component was detected in the ploted data as well as the ACF and PACF. In the seasonal scenario, the ADF test provided strong evidence for stationarity with a p-value of 0.01. This suggests to use one difference in the modeling part, as well as including a SAR. (TODO is SAR right?)
 
 
 # TOOD after this not checked the descrptions, style like above is good
@@ -348,7 +348,7 @@ TODO Description like in GDP Italy
 
 # Explore gdp of Italy
 analyze_diff_series(transformed_usa$gdp, "USA", 'GDP')
-analyze_diff_series(diff(transformed_usa$gdp), "USA", 'GDP', 4)
+analyze_diff_series(diff(transformed_usa$gdp), "USA", 'GDP')
 
 ```
 
@@ -396,7 +396,7 @@ TODO Description like in GDP Italy
 
 QUESTION? Is that it?
 
-```{r volatility clustering italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
+```{r volatility clustering italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 plot_volatility_clusters <- function(time_series, country, variable, uper = 0) {
   
@@ -421,48 +421,14 @@ plot_volatility_clusters <- function(time_series, country, variable, uper = 0) {
 }
 
 # Plotting the volatility clustering 
-plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'GDP')
-
-
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 200)
 ```
-
-
-```{r volatility clustering italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
-
-# Plotting the volatility clustering
-plot_volatility_clusters(transformed_italy$cpi, 'Italy', 'CPI')
-
-```
-QUESTION Heteroskedasticity so should we use GARCH or use log or maybe box cox?
-
-```{r volatility clustering italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
-
-# Plotting the volatility clustering
-plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks')
-
-```
-
-```{r volatility clustering usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
-
-# Plotting the volatility clustering
-plot_volatility_clusters(transformed_usa$gdp, 'USA','GDP')
-
-
-```
-
-```{r volatility clustering usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
-
-# Plotting the volatility clustering
-plot_volatility_clusters(transformed_usa$cpi, 'USA', 'CPI', 10)
-
-```
-
 
 
 ```{r volatility clustering usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Plotting the volatility clustering
-plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 100)
+plot_volatility_clusters(transformed_usa$stocks, 'USA', 'Stocks', 50)
 
 ```
 
@@ -736,28 +702,50 @@ evaluate_arima_models <- function(models, test_data) {
 }
 
 
-# TODO Use the seasonal knowledge tocreate one ourselfs
+# Crate different models
+model_max_i_gdp <- forecast::Arima(gdp_italy_train, order = c(9, 1, 16), method = 'ML')
 
-# Choose the maximum lags
-model_max <- forecast::Arima(gdp_italy_train, order = c(9, 1, 16), method = 'ML')
+model_seasonal_i_gdp <- forecast::Arima(gdp_italy_train, order = c(1, 1, 0), seasonal = list(order = c(0, 1, 1), period = 4), method = 'ML')
 
-# Choose the best model based on AIC
-model_aic <- auto.arima(gdp_italy_train, ic = 'aic')
+model_aic_i_gdp <- auto.arima(gdp_italy_train, ic = 'aic')
 
-# Choose the best model based on BIC
-model_bic <- auto.arima(gdp_italy_train, ic = 'bic')
+model_bic_i_gdp <- auto.arima(gdp_italy_train, ic = 'bic')
 
 
 # Create a list of models
-model_list <- list(model_max, model_aic, model_bic)
+model_list <- list(model_max_i_gdp, model_seasonal_i_gdp, model_aic_i_gdp, model_bic_i_gdp)
 
 # Evaluate the models
 evaluate_arima_models(model_list, gdp_italy_test)
 
 ```  
 
-```{r plot model italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+TODO description why which model and evaluation
+- first max lags
+- second accounting fro season in ACF and substracting
+-Other auto arma with differen IC
 
+```{r plot residual italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+
+plot_residuals_arima <- function(model, country, variable){ 
+  
+  # Set up the plot
+  par(mfrow = c(1, 2), mar = c(3, 4, 4, 1))
+
+  # ACF and PACF plots
+  acf(model$residuals, main = paste("ACF of", variable, "in", country))
+  pacf(model$residuals, main = paste("PACF of", variable, "in", country))
+}
+
+
+# Plot the best model TODO Yannik maybe in tow seperate parts?
+plot_residuals_arima(model_bic_i_gdp, "Italy", "GDP")
+
+```
+
+TODO description and saying best models and no furhter although might be better once (one so small violation okay only95 confidence interval wiht 18 lags 1 or 2 okay)
+
+```{r plot model italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
 # Plot the forecast
 plot_forecast_arima <- function(train_data, test_data, ts_data, country, variable, model) {
   ntest <- length(test_data)
@@ -784,54 +772,50 @@ plot_forecast_arima <- function(train_data, test_data, ts_data, country, variabl
           plot.caption = element_text(size = 6))
 }
 
-plot_residuals_arima <- function(model) { # QUESTION This is a good function to evaluate the residuals? and why is it white noise but ther are still iolations in the model_bic?
-  residuals <- model$residuals
-  acf(residuals, lag.max = 20, main = "ACF of Residuals")
-}
-
-
-# Plot the best model
-plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Italy", "GDP", model_bic)
-plot_residuals_arima(model_bic)
-# QUESTION why is it white nois adn there is still a violation?
-
+plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Italy", "GDP", model_bic_i_gdp)
 ```
 
+TODO Discription of good forcast
 
 ### 2.3.1 CPI Italy
 
+QUESTION Heteroskedasticity so should we use GARCH or use log or maybe box cox?
+look at residuals
+
 ```{r modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
 # TODO maybe look at seasonal self composed once?
 
 # Creating different models
-model_med <- forecast::Arima(cpi_italy_train, order = c(7, 1, 0)) 
-model_aic <- auto.arima(cpi_italy_train, ic = 'aic')
-model_bic <- auto.arima(cpi_italy_train, ic = 'bic')
+model_med_i_cpi <- forecast::Arima(cpi_italy_train, order = c(7, 1, 0)) 
+model_aic_i_cpi <- auto.arima(cpi_italy_train, ic = 'aic')
+model_bic_i_cpi <- auto.arima(cpi_italy_train, ic = 'bic')
 
 # Create a list of models
-model_list <- list(model_max, model_med, model_aic, model_bic)
+model_list <- list(model_med_i_cpi, model_aic_i_cpi, model_bic_i_cpi)
 
 # Evaluate the models
 evaluate_arima_models(model_list, cpi_italy_test)
 
 ```  
 
-```{r plot model italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r plot residual italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+
+# Plot the residuals of the best model
+plot_residuals_arima(model_bic_i_cpi, "Italy", "CPI")
+
+```
+
+```{r garch model italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Trying other models (GARCH?)
 ```  
 
 
 
-TODO HERE WE NEED TO LOOK INTO THE BEST MODELS BECAUSE IT IS NOT ONLY WHITE NOISE with 
-Plot residuals
-plot(model_max$residuals)
-acf(model_aic$residuals)
-pacf(model_aic$residuals)
-
 ```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot the forecast
-plot_forecast_arima(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", model_aic)
+#plot_forecast_arima(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", )# GARCH OR COMBINATION?) TODO
 
 ```  
 
@@ -842,12 +826,12 @@ plot_forecast_arima(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Ita
 # TODO maybe directly GARCH?
 
 # Creating different models
-model_min <- forecast::Arima(stocks_italy_train, order = c(2, 1, 0)) 
-model_aic <- auto.arima(stocks_italy_train, ic = 'aic')
-model_bic <- auto.arima(stocks_italy_train, ic = 'bic')
+model_min_i_stocks <- forecast::Arima(stocks_italy_train, order = c(2, 1, 0)) 
+model_aic_i_stocks <- auto.arima(stocks_italy_train, ic = 'aic')
+model_bic_i_stocks <- auto.arima(stocks_italy_train, ic = 'bic')
 
 # Create a list of models
-model_list <- list(model_min, model_aic, model_bic)
+model_list <- list(model_min_i_stocks, model_aic_i_stocks, model_bic_i_stocks)
 
 # Evaluate the models
 evaluate_arima_models(model_list, stocks_italy_test)
@@ -856,34 +840,61 @@ evaluate_arima_models(model_list, stocks_italy_test)
 
 TODO this looks super bad doesnt it? So GARCH needed but WHY? not visible in the plots was it?
 
+
+
+
 ### 2.3.1 GDP USA
 
 ```{r modelling usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Creating different models
-model_min <- forecast::Arima(gdp_usa_train, order = c(1, 1, 0))
-model_aic <- auto.arima(gdp_usa_train, ic = 'aic')
-model_bic <- auto.arima(gdp_usa_train, ic = 'bic')
+model_min_u_gdp <- forecast::Arima(gdp_usa_train, order = c(1, 1, 0))
+model_drift_u_gdp <- forecast::Arima(gdp_usa_train, order = c(1, 1, 0), include.drift = TRUE)
+model_aic_u_gdp <- auto.arima(gdp_usa_train, ic = 'aic')
+model_bic_u_gdp <- auto.arima(gdp_usa_train, ic = 'bic')
 
 # Create a list of models
-model_list <- list(model_min, model_aic, model_bic)
+model_list <- list(model_min_u_gdp, model_drift_u_gdp, model_aic_u_gdp, model_bic_u_gdp)
 
 # Evaluate the models
 evaluate_arima_models(model_list, gdp_usa_test)
-
 ``` 
+
+TODO explain why models
+- Spikes
+- Drift because one more diff needed then said to get stationary so maybe
+- IC used
+
+```{r plot residual usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+
+# Plot the residuals of the best model
+plot_residuals_arima(model_aic_u_gdp, "USA", "GDP")
+
+```
+
+TODO Describe no violations
+
+```{r plot model usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+
+plot_forecast_arima(gdp_usa_train, gdp_usa_test, transformed_usa$gdp, "USA", "GDP", model_aic_u_gdp)
+
+# TODO can we improve it?
+
+```
+
+TODO Describe forcast and why underestimated ?, not bad model since no residuals violations (best we could do)
 
 ### 2.3.1 CPI USA
 
 ```{r modelling usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Creating different models
-model_min <- forecast::Arima(cpi_usa_train, order = c(1, 1, 0))
-model_aic <- auto.arima(cpi_usa_train, ic = 'aic')
-model_bic <- auto.arima(cpi_usa_train, ic = 'bic')
+model_min_u_cpi <- forecast::Arima(cpi_usa_train, order = c(1, 1, 0))
+model_aic_u_cpi <- auto.arima(cpi_usa_train, ic = 'aic')
+model_bic_u_cpi <- auto.arima(cpi_usa_train, ic = 'bic')
 
 # Create a list of models
-model_list <- list(model_min, model_aic, model_bic)
+model_list <- list(model_min_u_cpi, model_aic_u_cpi, model_bic_u_cpi)
 
 # Evaluate the models
 evaluate_arima_models(model_list, cpi_usa_test)
@@ -891,21 +902,44 @@ evaluate_arima_models(model_list, cpi_usa_test)
 # TODO why, isnt the PCA 1 and that is it?
 
 ``` 
+TODO discribe why models
+
+```{r plot residual usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+
+# Plot the best model TODO Yannik maybe in tow seperate parts?
+plot_residuals_arima(model_aic_u_cpi, "USA", "CPI")
+
+```
+
+```{r garch model usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+# Trying other models (GARCH?)
+```  
+
+
 
 ### 2.3.1 Stocks USA
 
 ```{r modelling usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
+# Maybe directly GARCH?
+
 # Creating different models
-model_min <- forecast::Arima(stocks_usa_train, order = c(1, 1, 0))
-model_max <- forecast::Arima(stocks_usa_train, order = c(6, 1, 0))
-model_aic <- auto.arima(stocks_usa_train, ic = 'aic')
-model_bic <- auto.arima(stocks_usa_train, ic = 'bic')
+model_min_u_stocks <- forecast::Arima(stocks_usa_train, order = c(1, 1, 0))
+model_max_u_stocks <- forecast::Arima(stocks_usa_train, order = c(6, 1, 0))
+model_aic_u_stocks <- auto.arima(stocks_usa_train, ic = 'aic')
+model_bic_u_stocks <- auto.arima(stocks_usa_train, ic = 'bic')
 
 # Create a list of models
-model_list <- list(model_min, model_max, model_aic, model_bic)
+model_list <- list(model_min_u_stocks, model_max_u_stocks, model_aic_u_stocks, model_bic_u_stocks)
 
 # Evaluate the models
 evaluate_arima_models(model_list, stocks_usa_test)
 
 ``` 
+
+```{r plot residual usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}  
+
+# Plot the best model TODO Yannik maybe in tow seperate parts?
+#plot_residuals_arima(, "USA", "Stocks")
+
+```
