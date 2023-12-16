@@ -724,6 +724,7 @@ plot_forecast_arima <- function(train_data, test_data, ts_data, country, variabl
 }
 
 plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Italy", "GDP", model_bic_i_gdp)
+
 ```
 
 As observed in the plot, the forecast we achieved with this model is the most accurate one, and it is by using the ARIMA. The predicted or forecasted plot follows with a very small range of difference from the real line, confirming the model's accuracy.
@@ -756,11 +757,93 @@ TODO description why which model and evaluation
 ```{r plot residual italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot the residuals of the best model
-plot_residuals_arima(model_bic_i_cpi, "Italy", "CPI")
+plot_residuals_arima(model_aic_i_cpi, "Italy", "CPI")
 
 ```
 
 TODO Discribe, there are violations so other model maybe GARCH
+
+```{r simplify model italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+seasonal_4_6_i_c <- forecast::Arima(cpi_italy_train, order = c(0, 1, 0), seasonal = list(order = c(4, 1, 0), period = 6))
+
+seasonal_4_12_i_c <- forecast::Arima(cpi_italy_train, order = c(0, 1, 0), seasonal = list(order = c(4, 1, 0), period = 12))
+
+seasonal_2_6_i_c <- forecast::Arima(cpi_italy_train, order = c(0, 1, 0), seasonal = list(order = c(2, 1, 0), period = 6))
+
+seasonal_2_12_i_c <- forecast::Arima(cpi_italy_train, order = c(0, 1, 0), seasonal = list(order = c(2, 1, 0), period = 12))
+
+seasonal_1_6_i_c <- forecast::Arima(cpi_italy_train, order = c(0, 1, 0), seasonal = list(order = c(1, 1, 0), period = 6))
+
+model_list <- list(model_aic_i_cpi, seasonal_4_6_i_c, seasonal_4_12_i_c, seasonal_2_6_i_c, seasonal_2_12_i_c, seasonal_1_6_i_c)
+
+# Evauate model
+evaluate_arima_models(model_list, cpi_italy_test)
+
+
+```
+
+TODO discribe
+We could se every 6 periods seams to be a season
+Also although lowes AIC the MSPE is high so the first would habe been better (or winter holt)
+
+```{r plot residual italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+plot_residuals_arima(seasonal_4_6_i_c, "USA", "CPI")
+
+```
+
+TODO discribe
+
+```{r plot model italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plot_forecast_arima_3 <- function(train_data, test_data, ts_data, country, variable, wh, arima1, arima2) {
+  ntest <- length(test_data)
+  
+  # Extract the last date of the training data
+  last_date_train <- tail(time(train_data), 1)
+  
+  ggplot(data.frame(time = time(ts_data), value = ts_data, pred_arima = arima1)) + 
+    geom_line(aes(x = time, y = value, group = 1, color = "Actual")) +
+    
+    geom_line(aes(x = time, y = wh, group = 1, color = "WH"), size=0.75) +
+    geom_line(aes(x = time, y = arima1, group = 2, color = "ARIMA1"), size=0.75) +
+    geom_line(aes(x = time, y = arima2, group = 3, color = "ARIMA2"), size=0.75) +
+    
+    geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkblue", size = 0.9) +
+    xlab("Year") +
+    ylab(paste(variable, "in", country)) +
+    labs(title = paste("Forecast for", variable, "in", country),
+         subtitle = paste("The best models"),
+         caption = "Vertical line represents the last date of the training data") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+          plot.subtitle = element_text(size = 10, hjust = 0.5),
+          plot.caption = element_text(size = 6)) +
+    scale_color_manual(values = c("Actual" = "black", "WH" = "darkgreen", "ARIMA1" = "orange", "ARIMA2" = "red"))
+}
+
+
+
+model_hw <- ets(cpi_italy_train, model = 'AAA', alpha = 0.7)
+ntest <- length(cpi_italy_test)
+pred <- forecast(model_hw, h = ntest, level = 0)
+pred_hw <- c(model_hw$fitted, pred$mean)
+
+pred <- forecast(model_aic_i_cpi, h = ntest, level = 0)
+pred_arima1 <- c(model_aic_i_cpi$fitted, pred$mean)
+
+pred <- forecast(seasonal_4_6_i_c, h = ntest, level = 0)
+pred_arima2 <- c(seasonal_4_6_i_c$fitted, pred$mean)
+
+
+plot_forecast_arima_3(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", pred_hw, pred_arima1, pred_arima2)
+
+```
+
+TODO discribe
+
+# TRY GARCH (QUESTION)
+
 
 ```{r squared residuals italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -863,8 +946,6 @@ evaluate_garch_models(model_list_garch)
 
 ```
 
-TODO Discribe, mntion combination possible but nto done
-
 
 ```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -896,59 +977,16 @@ plot_forecast_garch <- function(train_data, test_data, ts_data, country, variabl
 
 plot_forecast_garch(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", a7)
 
+
 ```
 
 QUESTOION Why does it not work?
 
 
-```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-library(rugarch)
-library(forecast)
-library(ggplot2)
-
-# Function to plot GARCH forecast
-plot_forecast_garch <- function(train_data, test_data, ts_data, country, variable, model) {
-  ntest <- length(test_data)
-  
-  
-  
-  
-  # Forecast the conditional variance using the fitted GARCH model
-  vola_fit <- ts(garch11@fit$sigma^2,end=c(2019,10),frequency = 12)
-  vola_forecast <- ts(garch11@forecast$seriesFor,end=c(2020,10),frequency = 12)
-  
-  pred <- ugarchforecast(model, n.ahead = ntest)
-  pred_garch <- as.numeric(sigma(pred))
-  
-  # Extract the last date of the training data
-  last_date_train <- tail(time(train_data), 1)
-  
-  ggplot(data.frame(time = time(ts_data), value = ts_data, pred_garch = pred_garch)) + 
-    #geom_line(aes(x = time, y = value, group = 1)) +
-    geom_line(aes(x = time, y = pred_garch, group = 1), color = 'darkred', size = 0.75) +
-    geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkblue", size = 0.9) +
-    xlab("Year") +
-    ylab(paste(variable, "in", country)) +
-    labs(title = paste("Forecast for", variable, "in", country),
-         subtitle = paste("The best GARCH model"),
-         caption = "Vertical line represents the last date of the training data") +
-    theme_minimal() +
-    theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
-          plot.subtitle = element_text(size = 10, hjust = 0.5),
-          plot.caption = element_text(size = 6))
-}
-
-# Example usage
-plot_forecast_garch(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "YourCountry", "YourVariable", g2)
-
-
-
-```
 
 ### 2.3.1 Stocks Italy
 
-```{r modelling italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r modelling italy stocks arima, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # TODO maybe directly GARCH Yannik
 
@@ -964,6 +1002,91 @@ model_list <- list(model_min_i_stocks, model_aic_i_stocks, model_bic_i_stocks)
 evaluate_arima_models(model_list, stocks_italy_test)
 
 ```
+
+
+### GARCHSTOCKS
+
+
+```{r residuals garch italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+# define a function
+returns_evauate <- function(ts_data, country, variable) {
+  
+  # Set up the plot
+  par(mfrow = c(1, 2), mar = c(3, 4, 4, 1))
+
+  # ACF and PACF plots
+  acf(ts_data, main = paste("ACF returns of", variable, "in", country))
+  pacf(ts_data, main = paste("PACF returns of", variable, "in", country))
+}
+
+# log difference
+dl_st_i_train <- diff(log(stocks_italy_train))
+
+returns_evauate(dl_st_i_train, "Italy", "Stocks")
+```
+
+TODO discribe (for GARCH)
+
+```{r modelling italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+evaluate_garch_models <- function(models) {
+  
+  results <- data.frame(Model = character(), AIC = numeric(), BIC = numeric(), Residuals = character())
+  
+  for (i in seq_along(models)) {
+    
+    model <- models[[i]]
+    
+    garch_info <- infocriteria(model)
+
+    # Extract AIC and SIC
+    aic <-  garch_info[1]
+    bic <-  garch_info[2]
+    
+    # Check residuals for white noise
+    white_noise <- Box.test(residuals(model), lag = 20, type = "Ljung-Box")$p.value > 0.05
+    residuals_check <- ifelse(white_noise, "White Noise", "Not White Noise")
+
+    # Append results to the data frame
+    name <- paste("Model", i)
+    result_row <- data.frame(Model = name, AIC = aic, BIC = bic, Residuals = residuals_check)
+    results <- rbind(results, result_row)
+  }
+  
+  return(results)
+}
+
+a1 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 0)), distribution.model = "std"), data = stocks_italy_train)
+a2 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(2, 0)), distribution.model = "std"), data = stocks_italy_train)
+a3 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(3, 0)), distribution.model = "std"), data = stocks_italy_train)
+a4 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(4, 0)), distribution.model = "std"), data = stocks_italy_train)
+a5 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(5, 0)), distribution.model = "std"), data = stocks_italy_train)
+a6 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(6, 0)), distribution.model = "std"), data = stocks_italy_train)
+a7 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(7, 0)), distribution.model = "std"), data = stocks_italy_train)
+
+g1 <- ugarchfit(ugarchspec(variance.model = list(model = "gjrGARCH", garchOrder = c(1, 1)), distribution.model = "std"), data = stocks_italy_train)
+g2 <- ugarchfit(ugarchspec(variance.model = list(model = "gjrGARCH", garchOrder = c(2, 2)), distribution.model = "std"), data = stocks_italy_train)
+g3 <- ugarchfit(ugarchspec(variance.model = list(model = "gjrGARCH", garchOrder = c(3, 3)), distribution.model = "std"), data = stocks_italy_train)
+
+model_list <- list(a1, a2, a3, a4, a5, a6, a7, g1, g2, g3)
+
+evaluate_garch_models(model_list)
+
+```
+
+TODO discribe (for GARCH)
+
+
+```{r modelling garch italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+vole <- ts(g1@fit$sigma^2,end=c(2019,10),frequency = 12)
+plot(vole,xlab="",ylab="",main="Italy stocks Volatility (GARCH[1,1])")
+
+
+```
+
+TODO discribe (for GARCH)
+
 
 ### 2.3.1 GDP USA
 
@@ -997,8 +1120,6 @@ TODO Describe no violations
 
 plot_forecast_arima(gdp_usa_train, gdp_usa_test, transformed_usa$gdp, "USA", "GDP", model_aic_u_gdp)
 
-# TODO can we improve it?
-
 ```
 
 TODO Describe forcast and why underestimated ?, not bad model since no residuals violations (best we could do)
@@ -1014,50 +1135,131 @@ model_aic_u_cpi <- auto.arima(cpi_usa_train, ic = 'aic')
 model_bic_u_cpi <- auto.arima(cpi_usa_train, ic = 'bic')
 
 # Create a list of models
-model_list <- list(model_min_u_cpi, model_aic_u_cpi, model_bic_u_cpi, model_drift_u_cpi)
+model_list <- list(model_min_u_cpi, model_aic_u_cpi, model_bic_u_cpi)
 
 # Evaluate the models
+evaluate_arima_models(model_list, cpi_usa_test)
+
+```
+
+TODO discribe why models aic has drift
+
+```{r plot residual usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+plot_residuals_arima(model_aic_u_cpi, "USA", "CPI")
+
+```
+
+TODO discribe
+
+```{r simplify model usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+simplify_arima <- function(model, data, drift = F, significance_level = 0.05) {
+  # Extract coefficients and standard errors
+  coefficients <- coef(model)
+  cov_matrix <- model$var.coef
+  standard_errors <- sqrt(diag(cov_matrix))
+  
+  # Identify non-significant parameters
+  non_significant <- abs(coefficients) < standard_errors * qnorm(1 - significance_level / 2)
+  
+  # set all values in coefficients to NA
+  coefficients <- NA
+  coefficients[non_significant] <- 0
+  
+  # add one NA
+  if (drift){
+    coefficients <- c(coefficients, NA)}
+
+  # Fit the simplified model
+  order <- arimaorder(model)
+
+  simplified_model <- forecast::Arima(data, order = order, fixed = coefficients, include.drift = drift)
+  
+  return(simplified_model)
+}
+# Example usage:
+max_model <- forecast::Arima(cpi_usa_train, order = c(11, 1, 0))
+simplified_model_ar <- simplify_arima(max_model, cpi_usa_train, drift = TRUE)
+
+max_model <- forecast::Arima(cpi_usa_train, order = c(0, 1, 11))
+simplified_model_ma <- simplify_arima(max_model, cpi_usa_train, drift = TRUE)
+
+model_list <- list(model_aic_u_cpi, simplified_model_ar, simplified_model_ma)
+
+# Evauate model
 evaluate_arima_models(model_list, cpi_usa_test)
 
 
 ```
 
-TODO discribe why models
+TODO Discribe
 
-```{r plot residual usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r plot residual usa cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Plot the best model TODO Yannik maybe in tow seperate parts?
-plot_residuals_arima(model_min_u_cpi, "USA", "CPI")
+plot_residuals_arima(simplified_model_ma, "USA", "CPI")
 
 ```
 
-```{r garch model usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-# Trying other models (GARCH?)
+TODO Discribe
+
+```{r plot model usa cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+plot_forecast_arima(cpi_usa_train, cpi_usa_test, transformed_usa$cpi, "USA", "CPI", simplified_model_ma)
+
 ```
+
+TODO discribe
 
 ### 2.3.1 Stocks USA
 
-```{r modelling usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+### GARCHSTOCKS
 
-# Maybe directly GARCH?
 
-# Creating different models
-model_min_u_stocks <- forecast::Arima(stocks_usa_train, order = c(1, 1, 0))
-model_max_u_stocks <- forecast::Arima(stocks_usa_train, order = c(6, 1, 0))
-model_aic_u_stocks <- auto.arima(stocks_usa_train, ic = 'aic')
-model_bic_u_stocks <- auto.arima(stocks_usa_train, ic = 'bic')
+```{r residuals garch usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-# Create a list of models
-model_list <- list(model_min_u_stocks, model_max_u_stocks, model_aic_u_stocks, model_bic_u_stocks)
+# log difference
+dl_st_i_train <- diff(log(stocks_usa_train))
 
-# Evaluate the models
-evaluate_arima_models(model_list, stocks_usa_test)
+returns_evauate(dl_st_i_train, "Italy", "Stocks")
+```
+
+TODO discribe (for GARCH)
+
+```{r modelling garch usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+a1 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 0)), distribution.model = "std"), data = stocks_usa_train)
+a2 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(2, 0)), distribution.model = "std"), data = stocks_usa_train)
+a3 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(3, 0)), distribution.model = "std"), data = stocks_usa_train)
+a4 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(4, 0)), distribution.model = "std"), data = stocks_usa_train)
+a5 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(5, 0)), distribution.model = "std"), data = stocks_usa_train)
+a6 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(6, 0)), distribution.model = "std"), data = stocks_usa_train)
+a7 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(7, 0)), distribution.model = "std"), data = stocks_usa_train)
+
+g1 <- ugarchfit(ugarchspec(variance.model = list(model = "gjrGARCH", garchOrder = c(1, 1)), distribution.model = "std"), data = stocks_usa_train)
+g2 <- ugarchfit(ugarchspec(variance.model = list(model = "gjrGARCH", garchOrder = c(2, 2)), distribution.model = "std"), data = stocks_usa_train)
+g3 <- ugarchfit(ugarchspec(variance.model = list(model = "gjrGARCH", garchOrder = c(3, 3)), distribution.model = "std"), data = stocks_usa_train)
+
+model_list <- list(a1, a2, a3, a4, a5, a6, a7, g1, g2, g3)
+
+evaluate_garch_models(model_list)
 
 ```
 
-```{r plot residual usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+TODO discribe (for GARCH)
 
-# Plot the best model TODO Yannik maybe in tow seperate parts?
-#plot_residuals_arima(, "USA", "Stocks")
+
+```{r graph garch usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+vole <- ts(g1@fit$sigma^2,end=c(2019,10),frequency = 12)
+plot(vole,xlab="",ylab="",main="USA stocks Volatility (GARCH[1,1])")
+
 
 ```
+
+TODO discribe (for GARCH)
+
+
+
+# Conclusion
+
+TODO write
