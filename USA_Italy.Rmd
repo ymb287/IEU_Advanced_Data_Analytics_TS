@@ -212,7 +212,84 @@ plot_and_zoom(transformed_usa$stocks, 'Stocks', 'USA', 4)
 
 The Stock Market index for the USA different from what we observed in Italy, shows a clear upward trend, with some periods of higher volatility and shifts. Again, as noted in all of the previous plots, we see a period of decline right in 2008, which corresponds to the financial crisis, where gains were lost in a very short period. The U.S. stock market proved strong after this trying time, rising and showing a steady growth trend, confirming the economy's capacity to come back from difficult periods. The U.S. financial system's inherent flexibility and the proactive actions of policymakers are frequently credited for this recovery.
 
-## 1.4 Evaluate the data from Italy
+## 1.4 Train test split
+
+```{r train test split alternative, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+# Function for train test split
+train_test_split <- function(data_list, train_percentage = 0.8) {
+  split_data <- list()
+  
+  # Loop through the variables in the list
+  for (variable in names(data_list)) {
+    ts_data <- data_list[[variable]]
+    data_length <- length(ts_data)
+
+    # Calculate the train size
+    train_size <- round(train_percentage * data_length)
+    
+    # Train split, this way needed, to keep the ts format
+    train_data <- ts(ts_data[1:train_size], start = start(ts_data), frequency = frequency(ts_data))
+
+    end_time <- time(train_data)[length(train_data)]
+    
+    # Get start for testdata, if only split with [:] the ts type is lost as well as the start time
+    if (frequency(ts_data) == 12) {
+      end_time <- end_time + 1/12
+      start_year <- floor(end_time)
+      start_month <- (end_time - start_year) * 12 + 1
+    } else if (frequency(ts_data) == 4) {
+      end_time <- end_time + 1/4
+      start_year <- floor(end_time)
+      start_month <- (end_time - start_year) * 4 + 1
+    } else {
+      print('Error: Frequency not supported')
+    }
+
+    test_data <- ts(ts_data[(train_size + 1):data_length], start = c(start_year, start_month), frequency = frequency(ts_data))
+    
+    # Add the data to the list
+    split_data[[paste0(variable, "_train")]] <- train_data
+    split_data[[paste0(variable, "_test")]] <- test_data
+  }
+
+  return(split_data)
+}
+
+# Apply the train test split function
+split_italy <- train_test_split(transformed_italy)
+split_usa <- train_test_split(transformed_usa)
+
+```
+
+Splitting the data into a train and a test part is important to evaluate the models. By only splitting with [:] the ts type is lost as well as the start time. Therefore the function above is needed.
+
+```{r extract data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+# Italy variables
+gdp_italy_train <- split_italy$gdp_train
+gdp_italy_test <- split_italy$gdp_test
+
+cpi_italy_train <- split_italy$cpi_train
+cpi_italy_test <- split_italy$cpi_test
+
+stocks_italy_train <- split_italy$stocks_train
+stocks_italy_test <- split_italy$stocks_test
+
+# USA variables
+gdp_usa_train <- split_usa$gdp_train
+gdp_usa_test <- split_usa$gdp_test
+
+cpi_usa_train <- split_usa$cpi_train
+cpi_usa_test <- split_usa$cpi_test
+
+stocks_usa_train <- split_usa$stocks_train
+stocks_usa_test <- split_usa$stocks_test
+
+```
+
+The different variables are extracted from the list. Those variables are used for the model fitting.
+
+## 1.5 Evaluate the data from Italy
 
 ```{r evaluate gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -238,11 +315,11 @@ analyze_time_series <- function(ts_data, country, variable) {
 }
 
 # Explore gdp of Italy
-analyze_time_series(transformed_italy$gdp, "Italy", 'GDP')
+analyze_time_series(gdp_italy_train, "Italy", 'GDP')
 
 ```
 
-In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed over 15 significant lags, as well as the before seen seasonal pattern. Due to the slow decline we might conclude that it is an AR model. This is further supported due to the steep decline in the Partial Autocorrelation Function (PACF) after the fifth lag. Also the Model will probably include a seasonal component. Since is is quarterly and could already be seen in the plotted data. This might even reduce the PACF lags to 1. The Augmented Dickey-Fuller (ADF) test has a p-value of 0.26, which is more than 0.05, indicating that the data is non-stationary. The number of differences required for stationarity is 1.
+In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed over 15 significant lags, as well as the before seen seasonal pattern. Due to the slow decline we might conclude that it is an AR model. This is further supported due to the steep decline in the Partial Autocorrelation Function (PACF) after the fifth lag. Also the Model will probably include a seasonal component. Since is is quarterly and could already be seen in the plotted data. This might even reduce the PACF lags to 1. The Augmented Dickey-Fuller (ADF) test has a p-value of 0.83, which is more than 0.05, indicating that the data is non-stationary. The number of differences required for stationarity is 1.
 
 ```{r differenced gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -274,17 +351,17 @@ analyze_diff_series <- function(ts_data, country, variable, seasonal = 0) {
 }
 
 # Difference data from Italy
-analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP')
-analyze_diff_series(transformed_italy$gdp, "Italy", 'GDP', 4)
+analyze_diff_series(gdp_italy_train, "Italy", 'GDP')
+analyze_diff_series(gdp_italy_train, "Italy", 'GDP', 4)
 
 ```
 
-After using the recommended number of differences of 1 on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity with a p-value of 0.0675, as well as no further differencing. Since this is not completely stationary the 4th difference is take, because a seasonal component was detected in the ploted data as well as the ACF and PACF. In the seasonal scenario, the ADF test provided strong evidence for stationarity with a p-value of 0.01. This suggests to use one difference in the modeling part, as well as including a SAR. (TODO is SAR right?)
+After using the recommended number of differences of 1 on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity with a p-value of 0.062, as well as no further differencing. Since this is not completely stationary the 4th difference is take, because a seasonal component was detected in the ploted data as well as the ACF and PACF. In the seasonal scenario, the ADF test provided strong evidence for stationarity with a p-value of 0.01. This suggests to use one difference in the modeling part, as well as including a SAR.
 
 ```{r evaluate cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore cpi of Italy
-analyze_time_series(transformed_italy$cpi, "Italy", 'CPI')
+analyze_time_series(cpi_italy_train, "Italy", 'CPI')
 
 ```
 
@@ -293,7 +370,7 @@ For Italy's CPI the ADF has a p-value of 0.95 suggesting evidence against statio
 ```{r differenced cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Explore cpi of Italy
-analyze_diff_series(transformed_italy$cpi, "Italy", 'CPI')
+analyze_diff_series(cpi_italy_train, "Italy", 'CPI')
 
 ```
 
@@ -313,7 +390,7 @@ For Italy's stock data the ADF has a p-value of 0.41 suggesting nn-stationarity.
 ```{r differenced stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Explore stocks of Italy
-analyze_diff_series(transformed_italy$stocks, "Italy", 'Stocks')
+analyze_diff_series(stocks_italy_train, "Italy", 'Stocks')
 
 ```
 
@@ -331,28 +408,26 @@ For USA GDP data the ADF test suggested with a p-value of 0.82 non-stationarity.
 ```{r differenced gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Explore gdp of Italy
-analyze_diff_series(transformed_usa$gdp, "USA", 'GDP')
-analyze_diff_series(diff(transformed_usa$gdp), "USA", 'GDP')
+analyze_diff_series(gdp_usa_train, "USA", 'GDP')
+analyze_diff_series(diff(gdp_usa_train), "USA", 'GDP')
 
 ```
 
-Indication of a drift or linear trend that is not diffenced (no clue why), TODO Yannik
-
-After using the recommended number of differences (1) on USA GDP the Augmented Dickey-Fuller (ADF) test suggested evidence against stationarity with a p- value of 0.12, as well as no further differencing. Since this is not completely stationary it was differenced once more and then the ADF test provided strong evidence for stationarity. This suggests using one difference in the modeling part, and inlcuding a drift.
+After using the recommended number of differences (1) on USA GDP the Augmented Dickey-Fuller (ADF) test suggested evidence against stationarity with a p- value of 0.29, as well as no further differencing. Since this is not completely stationary it was differenced once more and then the ADF test provided strong evidence for stationarity. This suggests using one difference in the modeling part, and inlcuding a drift.
 
 ```{r evaluate cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore cpi of USA
-analyze_time_series(transformed_usa$cpi, "USA", 'CPI')
+analyze_time_series(cpi_usa_train, "USA", 'CPI')
 
 ```
 
-For USA cpi data the ADF test has a p-value of 0. 0.60 suggesting non-stationarity. Also taking one difference is recommended. The ACF shows a slow decline and since the PACF has a steep drop at lag 1, the model will probably be an AR(1). This will be tested in the modeling part.
+For USA cpi data the ADF test has a p-value of 0. 0.89 suggesting non-stationarity. Also taking one difference is recommended. The ACF shows a slow decline and since the PACF has a steep drop at lag 1, the model will probably be an AR(1). This will be tested in the modeling part.
 
 ```{r differenced cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Explore cpi of Italy
-analyze_diff_series(transformed_usa$cpi, "USA", 'CPI')
+analyze_diff_series(cpi_usa_train, "USA", 'CPI')
 
 ```
 
@@ -361,16 +436,16 @@ After using the recommended number of differences on USA cpi the Augmented Dicke
 ```{r evaluate stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore stocks of USA
-analyze_time_series(transformed_usa$stocks, "USA", 'Stocks')
+analyze_time_series(stocks_usa_train, "USA", 'Stocks')
 
 ```
 
-For USA stock data the Augmented Dickey-Fuller test has a p-value of 0.  0.41. The ACF shows a slow decline and  the PACF has a steep drop at lag 1 and a probable violation at lag 6.
+For USA stock data the Augmented Dickey-Fuller test has a p-value of 0.  0.41. The ACF shows a slow decline and  the PACF has a steep drop at lag 1 and a violation at lag 2.
 
 ```{r differenced stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Explore stocks of Italy
-analyze_diff_series(transformed_usa$stocks, "USA", 'Stocks')
+analyze_diff_series(stocks_usa_train, "USA", 'Stocks')
 
 ```
 
@@ -430,120 +505,10 @@ TODO discribe clusters in financial data (existece, why important and GARCH)
 
 ------------------------------------------------------------------------
 
-## 2.1 Train test split
+After inspecting the data and evaluating the different tests and plots as well as gathering information about features of the time series the modeling part can be started. The modeling part will be split into multiple parts. Before starting with ARIMA models, the data are split and the trend and sesonality of seasonal data are further inspected using the winter-holt method. After that the ARIMA models are created and evaluated.
+First, different ARIMA models are created, based on the insides gathered before, as well as using the auto.arima function. Second, the best model is chosen and the residuals are inspected. If the residuals are not white noise, further models are created. Finally the best model is chosen and the forecasts are created and evaluated.
 
-QUESTIONHERE2: How should we split the data?
-
-```{r train test split, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-# Creang train test split function
-train_test_split <- function(data_list, train_percentage = 0.8) {
-  split_data <- list()
-  
-  # Loop through the variables in the list
-  for (variable in names(data_list)) {
-    ts_data <- data_list[[variable]]
-    data_length <- length(ts_data)
-
-    # Calculate the train size
-    train_size <- round(train_percentage * data_length)
-
-    # Split the data
-    train_data <- ts_data[1:train_size]
-    test_data <- ts_data[(train_size + 1):data_length]
-    
-    # Add the data to the list
-    split_data[[paste0(variable, "_train")]] <- train_data
-    split_data[[paste0(variable, "_test")]] <- test_data
-  }
-
-  return(split_data)
-}
-
-# Apply the train test split function
-split_italy <- train_test_split(transformed_italy)
-split_usa <- train_test_split(transformed_usa)
-
-print(is.ts(split_italy$gdp_train)) # TODO IS NOT A TS ANYMORE SHE DID NOT CARE EITHER?
-print(split_italy$gdp_train) 
-
-
-```
-
-Had for some reason huge troubles with it sting in ts so needed to create this
-
-```{r train test split alternative, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-# Function for train test split
-train_test_split <- function(data_list, train_percentage = 0.8) {
-  split_data <- list()
-  
-  # Loop through the variables in the list
-  for (variable in names(data_list)) {
-    ts_data <- data_list[[variable]]
-    data_length <- length(ts_data)
-
-    # Calculate the train size
-    train_size <- round(train_percentage * data_length)
-    
-    # Train split, this way needed, to keep the ts format
-    train_data <- ts(ts_data[1:train_size], start = start(ts_data), frequency = frequency(ts_data))
-
-    end_time <- time(train_data)[length(train_data)]
-    
-    # Get start for testdata, if only split with [:] the ts type is lost as well as the start time
-    if (frequency(ts_data) == 12) {
-      end_time <- end_time + 1/12
-      start_year <- floor(end_time)
-      start_month <- (end_time - start_year) * 12 + 1
-    } else if (frequency(ts_data) == 4) {
-      end_time <- end_time + 1/4
-      start_year <- floor(end_time)
-      start_month <- (end_time - start_year) * 4 + 1
-    } else {
-      print('Error: Frequency not supported')
-    }
-
-    test_data <- ts(ts_data[(train_size + 1):data_length], start = c(start_year, start_month), frequency = frequency(ts_data))
-    
-    # Add the data to the list
-    split_data[[paste0(variable, "_train")]] <- train_data
-    split_data[[paste0(variable, "_test")]] <- test_data
-  }
-
-  return(split_data)
-}
-
-# Apply the train test split function
-split_italy <- train_test_split(transformed_italy)
-split_usa <- train_test_split(transformed_usa)
-
-```
-
-```{r extract data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-# Italy variables
-gdp_italy_train <- split_italy$gdp_train
-gdp_italy_test <- split_italy$gdp_test
-
-cpi_italy_train <- split_italy$cpi_train
-cpi_italy_test <- split_italy$cpi_test
-
-stocks_italy_train <- split_italy$stocks_train
-stocks_italy_test <- split_italy$stocks_test
-
-# USA variables
-gdp_usa_train <- split_usa$gdp_train
-gdp_usa_test <- split_usa$gdp_test
-
-cpi_usa_train <- split_usa$cpi_train
-cpi_usa_test <- split_usa$cpi_test
-
-stocks_usa_train <- split_usa$stocks_train
-stocks_usa_test <- split_usa$stocks_test
-
-```
-
-## 2.2 Trend and Seasonality with holt??? TODO
+## 2.2 Trend and Seasonality with winter-holt
 
 ```{r stationarity italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -774,6 +739,8 @@ model_med_i_cpi <- forecast::Arima(cpi_italy_train, order = c(7, 1, 0))
 model_aic_i_cpi <- auto.arima(cpi_italy_train, ic = 'aic')
 model_bic_i_cpi <- auto.arima(cpi_italy_train, ic = 'bic')
 
+model_6_i_cpi <- forecast::Arima(cpi_italy_train, order = c(6, 1, 0))
+
 # Create a list of models
 model_list <- list(model_med_i_cpi, model_aic_i_cpi, model_bic_i_cpi)
 
@@ -828,24 +795,26 @@ TODO Discribe the plot, squared residuals have clusters (?) so GARCH
 ```{r squared residuals (P)ACF italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 
-plot_sqr_residuals_arima <- function(model, country, variable){ 
+plot_sqr_residuals_arima <- function(ts, country, variable){ 
   
   # Set up the plot
   par(mfrow = c(1, 2), mar = c(3, 4, 4, 1))
 
+  
+  dl_values <- diff(log(ts))
   # ACF and PACF plots
-  acf((model$residuals)^2, main = paste("ACF of", variable, "squared residuals in", country))
-  pacf((model$residuals)^2, main = paste("PACF of", variable, "squared residuals in", country))
+  acf(dl_values, main = paste("ACF of", variable, "squared residuals in", country))
+  pacf(dl_values, main = paste("PACF of", variable, "squared residuals in", country))
 }
 
 
+
 # Plot the best model TODO Yannik maybe in tow seperate parts?
-plot_sqr_residuals_arima(model_bic_i_cpi, "Italy", "GDP")
+plot_sqr_residuals_arima(transformed_italy$cpi , "Italy", "GDP")
 
 ```
-
-TODO Discribe ACF gives ARCH(p) and PACF gives q in GARCH(p,q)
-
+ACF violations at lag values 2 and 4 suggest a GARCH(2) component.
+PACF violations at lag values 2, 4, 6, and 12 suggest a GARCH(2) component.
 QUESTION HOW THE FUCK DO I DO THIS?
 
 ```{r garch italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -877,10 +846,6 @@ evaluate_garch_models <- function(models) {
 }
 
 # Example usage with a single GARCH model
-a1 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 0)), distribution.model = "std"), data = cpi_italy_train)
-a2 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(2, 0)), distribution.model = "std"), data = cpi_italy_train)
-a3 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(3, 0)), distribution.model = "std"), data = cpi_italy_train)
-a4 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(4, 0)), distribution.model = "std"), data = cpi_italy_train)
 a5 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(5, 0)), distribution.model = "std"), data = cpi_italy_train)
 a6 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(6, 0)), distribution.model = "std"), data = cpi_italy_train)
 a7 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(7, 0)), distribution.model = "std"), data = cpi_italy_train)
@@ -888,10 +853,11 @@ a8 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = 
 a9 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(9, 0)), distribution.model = "std"), data = cpi_italy_train)
 g1 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 1)), distribution.model = "std"), data = cpi_italy_train)
 g2 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(2, 2)), distribution.model = "std"), data = cpi_italy_train)
+g3 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(3, 3)), distribution.model = "std"), data = cpi_italy_train)
+g4 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(4, 4)), distribution.model = "std"), data = cpi_italy_train)
+g5 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(5, 5)), distribution.model = "std"), data = cpi_italy_train)
 
-
-
-model_list_garch <- list(a1, a2, a3, a4, a5, a6, a7, a8, a9, g1, g2)
+model_list_garch <- list(a5, a6, a7, a8, a9, g1, g2, g3, g4, g5)
 
 evaluate_garch_models(model_list_garch)
 
@@ -935,6 +901,50 @@ plot_forecast_garch(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Ita
 QUESTOION Why does it not work?
 
 
+```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+library(rugarch)
+library(forecast)
+library(ggplot2)
+
+# Function to plot GARCH forecast
+plot_forecast_garch <- function(train_data, test_data, ts_data, country, variable, model) {
+  ntest <- length(test_data)
+  
+  
+  
+  
+  # Forecast the conditional variance using the fitted GARCH model
+  vola_fit <- ts(garch11@fit$sigma^2,end=c(2019,10),frequency = 12)
+  vola_forecast <- ts(garch11@forecast$seriesFor,end=c(2020,10),frequency = 12)
+  
+  pred <- ugarchforecast(model, n.ahead = ntest)
+  pred_garch <- as.numeric(sigma(pred))
+  
+  # Extract the last date of the training data
+  last_date_train <- tail(time(train_data), 1)
+  
+  ggplot(data.frame(time = time(ts_data), value = ts_data, pred_garch = pred_garch)) + 
+    #geom_line(aes(x = time, y = value, group = 1)) +
+    geom_line(aes(x = time, y = pred_garch, group = 1), color = 'darkred', size = 0.75) +
+    geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkblue", size = 0.9) +
+    xlab("Year") +
+    ylab(paste(variable, "in", country)) +
+    labs(title = paste("Forecast for", variable, "in", country),
+         subtitle = paste("The best GARCH model"),
+         caption = "Vertical line represents the last date of the training data") +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
+          plot.subtitle = element_text(size = 10, hjust = 0.5),
+          plot.caption = element_text(size = 6))
+}
+
+# Example usage
+plot_forecast_garch(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "YourCountry", "YourVariable", g2)
+
+
+
+```
 
 ### 2.3.1 Stocks Italy
 
@@ -999,16 +1009,16 @@ TODO Describe forcast and why underestimated ?, not bad model since no residuals
 
 # Creating different models
 model_min_u_cpi <- forecast::Arima(cpi_usa_train, order = c(1, 1, 0))
+
 model_aic_u_cpi <- auto.arima(cpi_usa_train, ic = 'aic')
 model_bic_u_cpi <- auto.arima(cpi_usa_train, ic = 'bic')
 
 # Create a list of models
-model_list <- list(model_min_u_cpi, model_aic_u_cpi, model_bic_u_cpi)
+model_list <- list(model_min_u_cpi, model_aic_u_cpi, model_bic_u_cpi, model_drift_u_cpi)
 
 # Evaluate the models
 evaluate_arima_models(model_list, cpi_usa_test)
 
-# TODO why, isnt the PCA 1 and that is it?
 
 ```
 
@@ -1017,7 +1027,7 @@ TODO discribe why models
 ```{r plot residual usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot the best model TODO Yannik maybe in tow seperate parts?
-plot_residuals_arima(model_aic_u_cpi, "USA", "CPI")
+plot_residuals_arima(model_min_u_cpi, "USA", "CPI")
 
 ```
 
