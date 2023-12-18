@@ -130,6 +130,8 @@ After analyzing the data, we decided to omit the information from 2020 onwards. 
 
 ## 1.3 Visual inspection of the data, including Seasonality
 
+### 1.3.1 GDP Italy
+
 ```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Create a function for visualization.
@@ -164,7 +166,11 @@ plot_and_zoom(transformed_italy$gdp, 'GDP', 'Italy', 4)
 
 ```
 
+PRESENTATIONHERE
+
 We can make some observations by looking at the graph of Italy's GDP from 2000 - 2020. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2020. The interruption in the trend corresponds to the 2008 financial crisis, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy's economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as "aging population, inflation, stagnation, and the impact of globalization on trade and demand" heavily affected the country's development and economic growth (Ardeni & Gallegati, 2023). Italy's development is slow mainly when compared to other countries European countries with similar capabilities and factors. We can observe another factor in the zoomed version of Italy's GDP. The plot shows a clear trend or pattern of seasonality, wherein in the first part of the year we observe a slight increase in the GDP, followed by a sharper increase in the second part of the year, and this is observed in all of the years included. This could be attributed to factors such as traditional vacation patterns, tourism peaks, or specific industry behaviors.
+
+### 1.3.2 CPI Italy
 
 ```{r plot cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -176,6 +182,8 @@ plot_and_zoom(transformed_italy$cpi, 'CPI', 'Italy', 4)
 
 Italy's CPI has seen a similar path to the GDP. From 2000 onwards, Italy's Consumer Price Index (CPI) has undergone fluctuations influenced by various economic factors. In the early 2000s, the CPI experienced constant growth, which continued until 2012, when it began to slow down and reduce the growth rate. This might be the consequence on the financial crisis, combined with internal economic and political issues. The zoomed plot also reveals seasonality, as we can observe dips in the CPI in the first part of each year for all of the observed periods. This could be attributed to high spending seasons of the year, as it usually is found in most CPI plots, such as holidays.
 
+### 1.3.3 Stock Italy
+
 ```{r plot stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot stocks for Italy
@@ -184,6 +192,8 @@ plot_and_zoom(transformed_italy$stocks, 'Stocks', 'Italy', 4)
 ```
 
 The Stock Market Index for Italy is very different from the previous charts and datasets. As observed, the market had many fluctuations throughout the 2000 - 2020 period. We can observe that from 2000 to 2003, Italy's stock market had a steep decline, followed by a rapid growth period that was again stopped by the financial crisis of 2008-2009. The index maintained high volatility for the following period, with short periods of growth or decline, but with an overall positive growth trend. Again, most of the behavior of the market is related to political decisions that the Italian government has made and external economic factors influencing investor confidence. Notably, the stock market showed increased volatility during times of political unpredictability or changes in governmental policy. Furthermore, the overall state of the world economy, particularly the Eurozone crisis, had a big impact on how the Italian stock market developed (Codogno & Galli, 2022).
+
+### 1.3.4 GDP USA
 
 ```{r plot gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -194,6 +204,8 @@ plot_and_zoom(transformed_usa$gdp, 'GDP', 'USA', 4)
 
 In the United States GDP time series, we again observe a positive trend, with periods of faster increase. There is a specific moment where we see an interruption in the growth, which is in 2008, corresponding to the Financial Crisis. After this period, we can observe that the GDP grew at a faster rate. Aiming to revive the economy, major government interventions, fiscal stimulus packages, and monetary policies are responsible for these accelerations in GDP growth in the post-crisis decades. The United States has gained more and more power and importance globally, which again also influenced the constant growth of its GDP (Salvatore, 2020). No indications of seasonality or a specific pattern can be observed in the plot or the zoomed plot. Moreover, it can be observed that the GDP for USA is significantly higher than Italy's, mostly as a result of the US doing more business abroad and having a bigger economy. The USA's economy is stronger than Italy's due in part to their larger corporations, advancements in technology, and international trading practices.
 
+### 1.3.5 CPI USA
+
 ```{r plot cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 # Plot CPI for USA
@@ -202,6 +214,8 @@ plot_and_zoom(transformed_usa$cpi, 'CPI', 'USA', 4)
 ```
 
 The USA's CPI follows a very positive trend, with continuous growth throughout the period observed. We can observe certain moments of slowdown, specifically after the 2008 financial crisis, but even with this, the CPI is constantly growing, at a somewhat slow rate. No seasonality or specific pattern can be observed in the plot or the zoomed plot. This upward trend points to an economy that is typically growing and stable, with rare setbacks like the financial crisis eventually being resolved. These variations in the growth rate could also be a sign of the economy's resiliency and capacity to bounce back from setbacks, which would explain the CPI's general upward tendency.
+
+### 1.3.6 Stocks USA
 
 ```{r plot stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -291,6 +305,8 @@ The different variables are extracted from the list. Those variables are used fo
 
 ## 1.5 Evaluate the data from Italy
 
+### 1.5.1 GDP Italy
+
 ```{r evaluate gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Analyse the different variables for stationarity
@@ -318,6 +334,8 @@ analyze_time_series <- function(ts_data, country, variable) {
 analyze_time_series(gdp_italy_train, "Italy", 'GDP')
 
 ```
+
+PRESENTATIONHERE
 
 In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed over 15 significant lags, as well as the before seen seasonal pattern. Due to the slow decline we might conclude that it is an AR model. This is further supported due to the steep decline in the Partial Autocorrelation Function (PACF) after the fifth lag. Also the Model will probably include a seasonal component. Since is is quarterly and could already be seen in the plotted data. This might even reduce the PACF lags to 1. The Augmented Dickey-Fuller (ADF) test has a p-value of 0.83, which is more than 0.05, indicating that the data is non-stationary. The number of differences required for stationarity is 1.
 
@@ -356,7 +374,11 @@ analyze_diff_series(gdp_italy_train, "Italy", 'GDP', 4)
 
 ```
 
-After using the recommended number of differences of 1 on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity with a p-value of 0.062, as well as no further differencing. Since this is not completely stationary the 4th difference is take, because a seasonal component was detected in the ploted data as well as the ACF and PACF. In the seasonal scenario, the ADF test provided strong evidence for stationarity with a p-value of 0.01. This suggests to use one difference in the modeling part, as well as including a SAR.
+PRESENTATIONHERE
+
+After using the recommended number of differences of 1 on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity with a p-value of 0.062, as well as no further differencing. Since this is not completely stationary the 4th difference is take, because a seasonal component was detected in the ploted data as well as the ACF and PACF. In the seasonal scenario, the ADF test provided strong evidence for stationarity with a p-value of 0.01. This suggests to use one difference in the modeling part, as well as including a SMA.
+
+### 1.5.2 CPI Italy
 
 ```{r evaluate cpi in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -374,7 +396,9 @@ analyze_diff_series(cpi_italy_train, "Italy", 'CPI')
 
 ```
 
-After using the recommended number of differences (1) on Italy's CPI the Augmented Dickey-Fuller (ADF) test suggested  stationarity, as well as no further differencing.
+After using the recommended number of differences (1) on Italy's CPI the Augmented Dickey-Fuller (ADF) test suggested  stationarity, as well as no further differencing. But it can be seen that the value is still bigger then the other once before and taking the graphsF into account as well a seasonal component can be expected.
+
+### 1.5.3 Stocks Italy
 
 ```{r evaluate stocks in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -396,6 +420,8 @@ analyze_diff_series(stocks_italy_train, "Italy", 'Stocks')
 
 After using the recommended number of differences (1) on Italy's stock data the Augmented Dickey-Fuller (ADF) test suggested stationarity, as well as no further differencing is recommended. 
 
+### 1.5.4 GDP USA
+
 ```{r evaluate gdp in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore gdp of USA
@@ -415,6 +441,8 @@ analyze_diff_series(diff(gdp_usa_train), "USA", 'GDP')
 
 After using the recommended number of differences (1) on USA GDP the Augmented Dickey-Fuller (ADF) test suggested evidence against stationarity with a p- value of 0.29, as well as no further differencing. Since this is not completely stationary it was differenced once more and then the ADF test provided strong evidence for stationarity. This suggests using one difference in the modeling part, and inlcuding a drift.
 
+### 1.5.5 CPI USA
+
 ```{r evaluate cpi in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
 # Explore cpi of USA
@@ -432,6 +460,9 @@ analyze_diff_series(cpi_usa_train, "USA", 'CPI')
 ```
 
 After using the recommended number of differences on USA cpi the Augmented Dickey-Fuller (ADF) test rejects the H0 hypothesis, and suggests stationary. This suggests using one difference in the modeling part.
+
+### 1.5.6 Stocks USA
+
 
 ```{r evaluate stocks in usa, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -451,9 +482,7 @@ analyze_diff_series(stocks_usa_train, "USA", 'Stocks')
 
 After using the recommended number of differences on USA stock the Augmented Dickey-Fuller test suggests stationarity. Also no further differencing is recommended.
 
-## 1.5 Volatility clustering
-
-QUESTION? Is that it?
+## 1.6 Volatility clustering
 
 ```{r volatility clustering italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
@@ -480,8 +509,10 @@ plot_volatility_clusters <- function(time_series, country, variable, uper = 0) {
 }
 
 # Plotting the volatility clustering 
-plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 150)
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks')
 ```
+
+PRESENTATIONHERE
 
 TODO discribe clusters in financial data (existece, why important and GARCH)
 
@@ -508,7 +539,7 @@ TODO discribe clusters in financial data (existece, why important and GARCH)
 After inspecting the data and evaluating the different tests and plots as well as gathering information about features of the time series the modeling part can be started. The modeling part will be split into multiple parts. Before starting with ARIMA models, the data are split and the trend and sesonality of seasonal data are further inspected using the winter-holt method. After that the ARIMA models are created and evaluated.
 First, different ARIMA models are created, based on the insides gathered before, as well as using the auto.arima function. Second, the best model is chosen and the residuals are inspected. If the residuals are not white noise, further models are created. Finally the best model is chosen and the forecasts are created and evaluated.
 
-## 2.2 Trend and Seasonality with winter-holt
+## 2.1 Trend and Seasonality with winter-holt
 
 ```{r stationarity italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -544,6 +575,8 @@ plot_forecast(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, country = 
 
 ```
 
+PRESENTATIONHERE
+
 TODO dsicription of the plot, the foreccast only with trend and season is good stron influence in general and little other infromation? No clue what else
 
 ```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -555,61 +588,9 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 
 TODO description of plot and what it means
 
-## 2.3 ARIMA
+## 2.2 ARIMA
 
-TO WE NEED THIS REALLY OR DO WE NOT USE IT? QUESTIONHERE3
-
-```{r TODO model automation, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-# QUESTION DO WE WANT TO USE THIS? 
-
-create_models <- function(p, d, q, train_data, test_data) {
-  results <- data.frame(order = character(),
-                         aic = numeric(),
-                         bic = numeric(),
-                         mpse = numeric())
-
-  for (i in 0:p) {
-    for (j in 0:q) {
-      order <- c(i, d, j)
-      fit <- Arima(train_data, order = order)
-      aic <- AIC(fit)
-      bic <- BIC(fit)
-
-      pred <- forecast(fit, h = length(test_data))
-      mpse <- mean((pred$mean - test_data)^2)
-
-      results <- rbind(results, data.frame(order = paste(order, collapse = "_"),
-                                           aic = aic,
-                                           bic = bic,
-                                           mpse = mpse))
-    }
-  }
-
-  # Choose parameters for the 3 lowest BIC, 3 lowest AIC, and 3 lowest MPSE
-  best_bic <- results[order(results$bic), ][1:3, ]
-  best_aic <- results[order(results$aic), ][1:3, ]
-  best_mpse <- results[order(results$mpse), ][1:3, ]
-
-  # Extract the selected orders
-  selected_orders <- unique(rbind(best_bic, best_aic, best_mpse)$order)
-
-  # Fit models with the selected orders
-  selected_models <- lapply(strsplit(selected_orders, "_"), function(x) {
-    order <- as.numeric(x)
-    fit <- Arima(train_data, order = order)
-    return(fit)
-  })
-
-  return(selected_models)
-}
-
-# Example usage:
-selected_models <- create_models(p = 2, d = 1, q = 2, train_data = gdp_italy_train, test_data = gdp_italy_test)
-
-```
-
-### 2.3.1 GDP Italy
+### 2.2.1 GDP Italy
 
 ```{r modelling italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Function to format ARIMA order
@@ -673,6 +654,8 @@ evaluate_arima_models(model_list, gdp_italy_test)
 
 ```
 
+PRESENTATIONHERE
+
 The ARIMA models we developed correspond to the following characteristics. The first function takes into consideration all the spikes of ACF and PACF and incorporates 9 autoregressive terms and 16 moving average terms, and overall uses the maximum lags. The second model uses seasonality as the main target for the modeling and tells us that it requires differencing for stationarity and for seasonal stationarity. The third uses as the parameter the lowest AIC, in this case, 334.4106, and the fourth model the lowest BIC, which was 341.2077. 
 
 
@@ -693,6 +676,8 @@ plot_residuals_arima <- function(model, country, variable){
 plot_residuals_arima(model_aic_i_gdp, "Italy", "GDP")
 
 ```
+
+PRESENTATIONHERE
 
 TODO description and saying best models and no furhter although might be better once (one so small violation okay only95 confidence interval wiht 18 lags 1 or 2 okay)
 
@@ -727,9 +712,11 @@ plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Ita
 
 ```
 
+PRESENTATIONHERE
+
 As observed in the plot, the forecast we achieved with this model is the most accurate one, and it is by using the ARIMA. The predicted or forecasted plot follows with a very small range of difference from the real line, confirming the model's accuracy.
 
-### 2.3.1 CPI Italy
+### 2.2.2 CPI Italy
 
 ```{r modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -840,172 +827,11 @@ plot_forecast_arima_3(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "I
 
 ```
 
+PRESENTATIONHERE
+
 TODO discribe
 
-# TRY GARCH (QUESTION)
-
-
-```{r squared residuals italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-plot_squared_residuals <- function(residuals, country, variable, uper = 0) {
-  
-  # Calculate the squared returns
-  squared_residuals <- (residuals)^2
-  
-  if (uper == 0) {
-    uper <- max(squared_residuals) + max(squared_residuals)*0.05
-  }
-
-  # Create the line plot
-  ggplot(data.frame(time = time(squared_residuals), value = squared_residuals), aes(x=time,y=value))  +
-    geom_segment(aes(xend = time, yend = 0)) +
-    labs(title = paste("Squared residuals of", variable, 'in', country),
-         x = "Time",
-         y = "Squared residuals") + 
-    theme_minimal() +
-    theme(panel.grid.minor = element_blank(),
-      plot.title = element_text(size = 12, face = "bold", hjust = 0.5)) +
-    scale_y_continuous(limits = c(0, uper))
-
-}
-
-plot_squared_residuals(model_bic_i_cpi$residuals, "Italy", "CPI", 1)
-
-```
-
-TODO Discribe the plot, squared residuals have clusters (?) so GARCH
-
-```{r squared residuals (P)ACF italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-
-plot_sqr_residuals_arima <- function(ts, country, variable){ 
-  
-  # Set up the plot
-  par(mfrow = c(1, 2), mar = c(3, 4, 4, 1))
-
-  
-  dl_values <- diff(log(ts))
-  # ACF and PACF plots
-  acf(dl_values, main = paste("ACF of", variable, "squared residuals in", country))
-  pacf(dl_values, main = paste("PACF of", variable, "squared residuals in", country))
-}
-
-
-
-# Plot the best model TODO Yannik maybe in tow seperate parts?
-plot_sqr_residuals_arima(transformed_italy$cpi , "Italy", "GDP")
-
-```
-ACF violations at lag values 2 and 4 suggest a GARCH(2) component.
-PACF violations at lag values 2, 4, 6, and 12 suggest a GARCH(2) component.
-QUESTION HOW THE FUCK DO I DO THIS?
-
-```{r garch italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-evaluate_garch_models <- function(models) {
-  
-  results <- data.frame(Model = character(), AIC = numeric(), BIC = numeric(), Residuals = character())
-  
-  for (i in seq_along(models)) {
-    
-    model <- models[[i]]
-    
-    garch_info <- infocriteria(model)
-    
-    # Extract AIC and SIC
-    aic <-  garch_info[1]
-    bic <-  garch_info[2]
-    
-    # Check residuals for white noise
-    white_noise <- Box.test(residuals(model), lag = 20, type = "Ljung-Box")$p.value > 0.05
-    residuals_check <- ifelse(white_noise, "White Noise", "Not White Noise")
-
-    # Append results to the data frame
-    name <- paste("Model", i)
-    result_row <- data.frame(Model = name, AIC = aic, BIC = bic, Residuals = residuals_check)
-    results <- rbind(results, result_row)
-  }
-  
-  return(results)
-}
-
-# Example usage with a single GARCH model
-a5 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(5, 0)), distribution.model = "std"), data = cpi_italy_train)
-a6 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(6, 0)), distribution.model = "std"), data = cpi_italy_train)
-a7 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(7, 0)), distribution.model = "std"), data = cpi_italy_train)
-a8 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(8, 0)), distribution.model = "std"), data = cpi_italy_train)
-a9 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(9, 0)), distribution.model = "std"), data = cpi_italy_train)
-g1 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(1, 1)), distribution.model = "std"), data = cpi_italy_train)
-g2 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(2, 2)), distribution.model = "std"), data = cpi_italy_train)
-g3 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(3, 3)), distribution.model = "std"), data = cpi_italy_train)
-g4 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(4, 4)), distribution.model = "std"), data = cpi_italy_train)
-g5 <- ugarchfit(ugarchspec(variance.model = list(model = "sGARCH", garchOrder = c(5, 5)), distribution.model = "std"), data = cpi_italy_train)
-
-model_list_garch <- list(a5, a6, a7, a8, a9, g1, g2, g3, g4, g5)
-
-evaluate_garch_models(model_list_garch)
-
-```
-
-
-```{r plot modelling italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-# Plot the forecast
-plot_forecast_garch <- function(train_data, test_data, ts_data, country, variable, model) {
-  ntest <- length(test_data)
-  forecast_values <- ugarchforecast(model, n.ahead = length(test_data))
-  forecast_series <- forecast_values@forecast$seriesFor
-  
-  pred_garch <- c(model@fit$fitted.values, forecast_series)
-
-  # Extract the last date of the training data
-  last_date_train <- tail(time(train_data), 1)
-  
-  ggplot(data.frame(time = time(ts_data), value = ts_data, pred_arima = pred_garch)) + 
-    geom_line(aes(x = time, y = value, group = 1)) +
-    geom_line(aes(x = time, y = pred_garch, group = 1), color = 'darkgreen', size=0.75) +
-    geom_vline(aes(xintercept = as.numeric(last_date_train)), color = "darkblue", size = 0.9) +
-    xlab("Year") +
-    ylab(paste(variable, "in", country)) +
-    labs(title = paste("Forecast for", variable, "in", country),
-         caption = "Vertical line represents the last date of the training data") +
-    theme_minimal() +
-    theme(plot.title = element_text(size = 12, face = "bold", hjust = 0.5),
-          plot.subtitle = element_text(size = 10, hjust = 0.5),
-          plot.caption = element_text(size = 6))
-}
-
-
-plot_forecast_garch(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "Italy", "CPI", a7)
-
-
-```
-
-QUESTOION Why does it not work?
-
-
-
-### 2.3.1 Stocks Italy
-
-```{r modelling italy stocks arima, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
-
-# TODO maybe directly GARCH Yannik
-
-# Creating different models
-model_min_i_stocks <- forecast::Arima(stocks_italy_train, order = c(2, 1, 0)) 
-model_aic_i_stocks <- auto.arima(stocks_italy_train, ic = 'aic')
-model_bic_i_stocks <- auto.arima(stocks_italy_train, ic = 'bic')
-
-# Create a list of models
-model_list <- list(model_min_i_stocks, model_aic_i_stocks, model_bic_i_stocks)
-
-# Evaluate the models
-evaluate_arima_models(model_list, stocks_italy_test)
-
-```
-
-
-### GARCHSTOCKS
-
+### 2.2.3 Stocks Italy
 
 ```{r residuals garch italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # define a function
@@ -1088,7 +914,7 @@ plot(vole,xlab="",ylab="",main="Italy stocks Volatility (GARCH[1,1])")
 TODO discribe (for GARCH)
 
 
-### 2.3.1 GDP USA
+### 2.2.4 GDP USA
 
 ```{r modelling usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1124,7 +950,7 @@ plot_forecast_arima(gdp_usa_train, gdp_usa_test, transformed_usa$gdp, "USA", "GD
 
 TODO Describe forcast and why underestimated ?, not bad model since no residuals violations (best we could do)
 
-### 2.3.1 CPI USA
+### 2.2.5 CPI USA
 
 ```{r modelling usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1210,10 +1036,7 @@ plot_forecast_arima(cpi_usa_train, cpi_usa_test, transformed_usa$cpi, "USA", "CP
 
 TODO discribe
 
-### 2.3.1 Stocks USA
-
-### GARCHSTOCKS
-
+### 2.2.6 Stocks USA
 
 ```{r residuals garch usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1257,7 +1080,6 @@ plot(vole,xlab="",ylab="",main="USA stocks Volatility (GARCH[1,1])")
 ```
 
 TODO discribe (for GARCH)
-
 
 
 # Conclusion
