@@ -27,7 +27,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
-For the final project of Advanced Data Analytics, we decided to analyze three variables of two different countries, and with them, find and dissect valuable information, with which we can after create forecasts. The two countries that we decided on were Italy and the US, two countries that despite their distinct economic landscapes, share a profound impact on the global stage. The variables that we will be using will be the country's GDP, which is one of the most crucial indicators of the overall growth of the country, the CPI or Consumer Price Index, which goes along with the GDP but also gives us further information, and the Stock Market Index for each country.
+For the final project of Advanced Data Analytics, we decided to analyze three variables of two different countries, and with them, find and dissect valuable information, with which we can create forecasts. The two countries that we decided on were Italy and the US. These countries, with their diverse economic landscapes, wield significant global influence, and despite their distinct economic landscapes, share a profound impact on the global stage. 
+The variables that we will be using will be the following: GDP, CPI, and Stock Market Index. GDP, measuring a nation's total economic output, serves as a primary focus. An increase in GDP signifies economic growth, leading to job creation and higher incomes. Conversely, a decrease in GDP suggests a recession, bringing about unemployment and income reductions. The CPI, or Consumer Price Index, plays a pivotal role in understanding how prices for everyday goods and services are changing, offering insights into inflation and its impact on the cost of living. The Stock Market Index, another vital variable, tracks and represents the collective performance of selected stocks within each nation's equity market. Changes in the Stock Market Index are closely tied to the confidence in a country's economy, reflecting investor sentiment and overall economic conditions. We wanted to use these variables as it has been proven that they are correlated, with examples such as the “positive and significant relationship between the GDP and CPI” (Mahmoud, 2015). Our main goal for doing this project is to understand the economic health of each country, see how the variables relate to each other, and understand how we can predict the future, and we want to observe what these predictions are. This type of work is very important in the real world, as it can help policymakers understand the state of their country’s economy, and with this, advise them in creating measures that can stabilize it and overall aid the country.  
+
 
 # Part 1: Prepare and inspect the data
 
@@ -1085,3 +1087,14 @@ TODO discribe (for GARCH)
 # Conclusion
 
 TODO write
+
+
+# References
+
+Ardeni, P.G., Gallegati, M. On Italian Economic Development: What the Long-term Says About the Short-term. Ital Econ J (2023). https://doi.org/10.1007/s40797-023-00219-5 
+
+Codogno, L., & Galli, G. (2022). Lessons from Italy’s Economic Decline. https://economy2030.resolutionfoundation.org/wp-content/uploads/2022/11/Lessons-from-Italys-economic-decline_.pdf
+
+Salvatore, D. (2020). Growth and trade in the United States and the World Economy: Overview. Journal of policy modeling. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7195104/  
+
+Limam Ould Mohamed Mahmoud, 2015. "Consumer Price Index and Economic Growth: A Case Study of Mauritania 1990 – 2013," Asian Journal of Empirical Research, Asian Economic and Social Society, vol. 5(2), pages 16-23. 
