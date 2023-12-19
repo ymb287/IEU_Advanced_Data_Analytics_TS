@@ -777,7 +777,7 @@ Also although lowes AIC the MSPE is high so the first would habe been better (or
 
 ```{r plot residual italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-plot_residuals_arima(seasonal_4_6_i_c, "USA", "CPI")
+plot_residuals_arima(seasonal_4_6_i_c, "Italy", "CPI")
 
 ```
 
