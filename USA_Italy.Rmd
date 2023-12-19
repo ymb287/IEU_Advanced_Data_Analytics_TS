@@ -972,7 +972,7 @@ evaluate_arima_models(model_list, cpi_usa_test)
 
 ```
 
-TODO discribe why models aic has drift
+Models incorporating drift (ARIMA(2,1,0) and ARIMA(0,1,2)) have lower AIC values, signifying improved fit and suggesting that the inclusion of a linear trend enhances the accuracy in capturing the underlying time series structure.
 
 ```{r plot residual usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -980,7 +980,7 @@ plot_residuals_arima(model_aic_u_cpi, "USA", "CPI")
 
 ```
 
-TODO discribe
+Because the residuals, when plotted in ACF and PACF show some violations, it tells us that there is still information to be extracted from the data that our previous models did not capture. Therefore other models will be used to try and understand the remaining violations of the PACF and ACF.
 
 ```{r simplify model usa cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 simplify_arima <- function(model, data, drift = F, significance_level = 0.05) {
@@ -1022,7 +1022,7 @@ evaluate_arima_models(model_list, cpi_usa_test)
 
 ```
 
-TODO Discribe
+These new models yield lower AIC results and different values for the other categories and give us better and more accurate overall results. 
 
 ```{r plot residual usa cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1030,7 +1030,7 @@ plot_residuals_arima(simplified_model_ma, "USA", "CPI")
 
 ```
 
-TODO Discribe
+The newly plotted residuals of ACF and PACF show way fewer violations, and we can safely say the models accurately forecast the data, so we can now choose the desired model. 
 
 ```{r plot model usa cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1038,7 +1038,7 @@ plot_forecast_arima(cpi_usa_train, cpi_usa_test, transformed_usa$cpi, "USA", "CP
 
 ```
 
-TODO discribe
+After evaluating multiple ARIMA models, the selected one highlights the challenge of accurately predicting future Consumer Price Index (CPI) trends. While the model effectively captures general trends, its limitations in precisely forecasting specific patterns are evident, particularly considering the univariate nature of ARIMA. This is exemplified in the Italy data, where the model indicates a stronger rise in CPI than predicted. 
 
 ### 2.2.6 Stocks USA
 
