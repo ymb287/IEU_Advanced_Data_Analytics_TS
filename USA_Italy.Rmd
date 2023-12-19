@@ -775,7 +775,7 @@ plot_residuals_arima(seasonal_4_6_i_c, "Italy", "CPI")
 
 ```
 
-TODO discribe
+We see no violations in the PACF of CPI residuals in the USA and one spike in the ACF of CPI residuals in usa. Therefore we have good models and do not need further modeling. 
 
 ```{r plot model italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plot_forecast_arima_3 <- function(train_data, test_data, ts_data, country, variable, wh, arima1, arima2) {
