@@ -655,9 +655,9 @@ evaluate_arima_models(model_list, gdp_italy_test)
 
 ```
 
-PRESENTATIONHERE
 
-The ARIMA models we developed correspond to the following characteristics. The first function takes into consideration all the spikes of ACF and PACF and incorporates 9 autoregressive terms and 16 moving average terms, and overall uses the maximum lags. The second model uses seasonality as the main target for the modeling and tells us that it requires differencing for stationarity and for seasonal stationarity. The third uses as the parameter the lowest AIC, in this case, 334.4106, and the fourth model the lowest BIC, which was 341.2077. 
+
+The ARIMA models we developed correspond to the following characteristics. The first function takes into consideration all the spikes of ACF and PACF and incorporates 9 autoregressive terms and 16 moving average terms, and overall uses the maximum lags. The second model uses seasonality as the main target for the modeling and tells us that it requires differencing for stationarity and for seasonal stationarity. The third uses the parameter the lowest AIC, in this case, 334.4106, and the fourth model the lowest BIC, which was 341.2077. 
 
 
 ```{r plot residual italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -673,7 +673,7 @@ plot_residuals_arima <- function(model, country, variable){
 }
 
 
-# Plot the best model TODO Yannik maybe in tow seperate parts?
+
 plot_residuals_arima(model_aic_i_gdp, "Italy", "GDP")
 
 ```
@@ -828,9 +828,8 @@ plot_forecast_arima_3(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, "I
 
 ```
 
-PRESENTATIONHERE
 
-TODO discribe
+Here several ARIMA models were used alongside winter-holts to capture the trend and seasonality within the CPI data. Although all these models properly model the training data, the test data could not be captured accurately by our modeling. Overall Winter-holt had the best prediction for the direction of the trend.
 
 ### 2.2.3 Stocks Italy
 
@@ -852,7 +851,7 @@ dl_st_i_train <- diff(log(stocks_italy_train))
 returns_evauate(dl_st_i_train, "Italy", "Stocks")
 ```
 
-TODO discribe (for GARCH)
+Because the squared returns, when plotted in ACF and PACF show some violations, it tells sus that there is still information to be  extracted from the data that our previous models did not capture. Therefore GARCH will be used to try and understand the remaining violations of the PACF and ACF.
 
 ```{r modelling italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -901,7 +900,7 @@ evaluate_garch_models(model_list)
 
 ```
 
-TODO discribe (for GARCH)
+Here we take into consideration several GARCH models to evaluate them by the lowest AIC, which leads us to use model 8.
 
 
 ```{r modelling garch italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -912,7 +911,9 @@ plot(vole,xlab="",ylab="",main="Italy stocks Volatility (GARCH[1,1])")
 
 ```
 
-TODO discribe (for GARCH)
+GARCH model was used due to observed volatility in the data, as observed in 2000-2002 the model properly models the dot com bubble, and then in 2007 the housing  crisis 
+the model is also consistent with the crisis that also where modeled with the GDP, showing that the stock data of italy is closely related to the country's GDP data 
+
 
 
 ### 2.2.4 GDP USA
@@ -932,7 +933,9 @@ model_list <- list(model_min_u_gdp, model_drift_u_gdp, model_aic_u_gdp, model_bi
 evaluate_arima_models(model_list, gdp_usa_test)
 ```
 
-TODO explain why models - Spikes - Drift because one more diff needed then said to get stationary so maybe - IC used
+TODO explain why models - Spikes - Drift because one more diff is needed than said to get stationary so maybe - IC used
+
+Here we take into account several models, the first considers the highest lag within the different data's ACF and PACF to create the model. For the second model we identified that the data was not fully stationary after differencing so we took into account drift to get the data stationary. The last 2 models take into account the lowest aic and bic. 
 
 ```{r plot residual usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -941,7 +944,7 @@ plot_residuals_arima(model_aic_u_gdp, "USA", "GDP")
 
 ```
 
-TODO Describe no violations
+Here the residuals of the data show no violations, therefore our models successfully modeled the test data. No further modeling is needed.
 
 ```{r plot model usa gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -949,7 +952,7 @@ plot_forecast_arima(gdp_usa_train, gdp_usa_test, transformed_usa$gdp, "USA", "GD
 
 ```
 
-TODO Describe forcast and why underestimated ?, not bad model since no residuals violations (best we could do)
+Our model uses our best forecast, lowest aic model with ARIMA, and  underestimates growth, this can be a result of unpredictable factors such as larger-than-expected growth. 
 
 ### 2.2.5 CPI USA
 
