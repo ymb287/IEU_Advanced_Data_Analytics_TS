@@ -576,9 +576,8 @@ plot_forecast(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, country = 
 
 ```
 
-PRESENTATIONHERE
+The graph shows the predicted GDP values, considering factors like trends and seasons. The positive outlook suggests Italy's GDP is on the rise after the 2007 crisis. Comparing it with Italy's Consumer Price Index (CPI), we find that the forecasting model used here works well for GDP trends. On the other hand, ARIMA is effective for predicting CPI, especially during the 2007 crisis. In conclusion the tool helps us see future economic trends, and for Italy's GDP, things are looking up. The forecasting methods used give us insights into economic patterns and potential future directions.
 
-TODO dsicription of the plot, the foreccast only with trend and season is good stron influence in general and little other infromation? No clue what else
 
 ```{r stationarity italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -587,7 +586,7 @@ plot_forecast(cpi_italy_train, cpi_italy_test, transformed_italy$cpi, country = 
 
 ```
 
-TODO description of plot and what it means
+Our visual compares different models for forecasting Italy's CPI. While ARIMA underestimated actual data and both models performed well on training data but struggled with testing, the Winter-Holt model stood out in predicting CPI trends accurately. Despite the complexity of CPI influenced by fiscal and political factors, our models consistently predict a rise in CPI, aligning with increased GDP predictions. This insight is crucial for policymakers to prevent inflation and manage CPI effectively.
 
 ## 2.2 ARIMA
 
@@ -678,9 +677,8 @@ plot_residuals_arima(model_aic_i_gdp, "Italy", "GDP")
 
 ```
 
-PRESENTATIONHERE
 
-TODO description and saying best models and no furhter although might be better once (one so small violation okay only95 confidence interval wiht 18 lags 1 or 2 okay)
+Our visual examines residuals (the differences between predicted and actual values) for the best ARIMA model forecasting Italy's GDP. Both plots, ACF and PACF, show no significant patterns in the residuals, indicating a good fit for the model. Because there are no issues, we can trust this model for predicting Italy's GDP without the need for further adjustments.
 
 ```{r plot model italy gdp, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 # Plot the forecast
@@ -713,7 +711,6 @@ plot_forecast_arima(gdp_italy_train, gdp_italy_test, transformed_italy$gdp, "Ita
 
 ```
 
-PRESENTATIONHERE
 
 As observed in the plot, the forecast we achieved with this model is the most accurate one, and it is by using the ARIMA. The predicted or forecasted plot follows with a very small range of difference from the real line, confirming the model's accuracy.
 
@@ -738,9 +735,8 @@ evaluate_arima_models(model_list, cpi_italy_test)
 
 ```
 
-TODO description why which model and evaluation
-- first max significant lags 
--Other auto arma with differen IC
+We tried different approaches to forecast Italy's Consumer Price Index (CPI). First, we manually selected an ARIMA(7, 1, 0) model based on significant lags. Then, we used auto ARIMA models, considering AIC and BIC for selection. The evaluation showed that the ARIMA(7, 1, 0) model had the lowest AIC, but its residuals didn't behave like white noise, indicating room for improvement. We also tested an additional ARIMA(6, 1, 0) model. In summary, our process involved trying various models, evaluating based on information criteria, and acknowledging the need for potential adjustments to enhance CPI forecasting accuracy.
+
 
 ```{r plot residual italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -749,7 +745,7 @@ plot_residuals_arima(model_aic_i_cpi, "Italy", "CPI")
 
 ```
 
-TODO Discribe, there are violations so other model maybe GARCH
+The ACF and PACF visuals for Italy's CPI residuals indicate violations, notably with a significant spike in both plots, suggesting unaccounted patterns. These patterns may necessitate the consideration of GARCH models to address volatility and improve forecasting accuracy. Addressing these issues is crucial for enhancing the reliability of CPI forecasts, which, if unaddressed, could impact Italy's economic planning and decision-making.
 
 ```{r simplify model italy cpi, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -771,9 +767,7 @@ evaluate_arima_models(model_list, cpi_italy_test)
 
 ```
 
-TODO discribe
-We could se every 6 periods seams to be a season
-Also although lowes AIC the MSPE is high so the first would habe been better (or winter holt)
+We explored various seasonal ARIMA models to improve forecasting for Italy's CPI. Notably, models with different seasonal periods (4 and 6, 4 and 12, 2 and 6, 2 and 12, 1 and 6) were tested. Evaluation results showed that while the model with a seasonal period of 4 and 6 had the lowest AIC, its MSPE was high, suggesting less accurate predictions. This underscores the importance of considering both AIC and MSPE. Additionally, the visual observation that a seasonal pattern occurs every 6 periods aligns with our exploration of different seasonal periods. This analysis guides us in selecting the most effective model for precise CPI forecasting, with potential improvements compared to the initial model or the Winter-Holt method.
 
 ```{r plot residual italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1096,6 +1090,6 @@ Ardeni, P.G., Gallegati, M. On Italian Economic Development: What the Long-term 
 
 Codogno, L., & Galli, G. (2022). Lessons from Italy’s Economic Decline. https://economy2030.resolutionfoundation.org/wp-content/uploads/2022/11/Lessons-from-Italys-economic-decline_.pdf
 
-Salvatore, D. (2020). Growth and trade in the United States and the World Economy: Overview. Journal of policy modeling. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7195104/  
-
 Limam Ould Mohamed Mahmoud, 2015. "Consumer Price Index and Economic Growth: A Case Study of Mauritania 1990 – 2013," Asian Journal of Empirical Research, Asian Economic and Social Society, vol. 5(2), pages 16-23. 
+
+Salvatore, D. (2020). Growth and trade in the United States and the World Economy: Overview. Journal of policy modeling. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7195104/  
