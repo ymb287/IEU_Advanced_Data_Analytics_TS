@@ -1049,7 +1049,7 @@ dl_st_i_train <- diff(log(stocks_usa_train))
 returns_evauate(dl_st_i_train, "Italy", "Stocks")
 ```
 
-TODO discribe (for GARCH)
+Because the squared returns, when plotted in ACF and PACF show some violations, it tells us that there is still information to be extracted from the data that our previous models did not capture. Therefore GARCH will be used to try and understand the remaining violations of the PACF and ACF.
 
 ```{r modelling garch usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -1071,7 +1071,7 @@ evaluate_garch_models(model_list)
 
 ```
 
-TODO discribe (for GARCH)
+Here we take into consideration several GARCH models to evaluate them by the lowest AIC, which leads us to the most accurate model.
 
 
 ```{r graph garch usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -1082,8 +1082,7 @@ plot(vole,xlab="",ylab="",main="USA stocks Volatility (GARCH[1,1])")
 
 ```
 
-TODO discribe (for GARCH)
-
+This GARCH model was used due to observed volatility in the data, as observed in the high peak periods, with the housing crisis in 2007, and economic uncertainties in 2012. The model is very accurate and helps us visualize this element in the data. 
 
 # Conclusion
 
