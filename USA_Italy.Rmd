@@ -516,7 +516,7 @@ plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks')
 
 PRESENTATIONHERE
 
-TODO discribe clusters in financial data (existece, why important and GARCH)
+The volatility clustering in Italy's stock data represents the larger volatility during the dot com bubble of 2002 and the 2007 housing crisis. As a result of the volatility, GARCH is used as the preferred model to capture the most information. Additionally, GARCH is most efficient at capturing time-varying volatility within financial data.
 
 ```{r volatility clustering usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE, fig.width=8, fig.height=3}
 
