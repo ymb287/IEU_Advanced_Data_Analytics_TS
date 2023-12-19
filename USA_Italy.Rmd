@@ -1086,8 +1086,9 @@ This GARCH model was used due to observed volatility in the data, as observed in
 
 # Conclusion
 
-TODO write
+In conclusion, our project reveals a close interrelation among the analyzed variables, particularly evident in the comparison between the US and Italy. Notably, the US GDP exhibited robust and non-seasonal growth, outpacing Italy. The US Consumer Price Index (CPI) also displayed a faster rate of increase. The distinct impacts of the housing crises on stocks and GDP further underscore the complexity of these interconnected economic factors.
 
+Looking ahead, both economies show an upward trend, but our models highlight a concerning rise in inflation. This emphasizes the importance of focusing on inflation in the fiscal policy agendas of both governments to ensure sustainable economic growth and stability.
 
 # References
 
