@@ -61,7 +61,7 @@ Steps for us:
 
 ------------------------------------------------------------------------
 
-## 1.1 Importing and inspecting the data set
+## 1.1 Importing and inspecting the data
 
 ```{r Import data, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -82,6 +82,8 @@ data <- data[, -c(7, 9)]
 print(data)
 
 ```
+
+PRESENTATIONHERE
 
 As observed, the years that we will be using for this analysis are from 2000 to 2020, giving us a comprehensive analysis of each country's variables throughout the 21st century.
 
@@ -130,6 +132,9 @@ After analyzing the data, we decided to omit the information from 2020 onwards. 
 
 ## 1.3 Visual inspection of the data, including Seasonality
 
+
+
+
 ### 1.3.1 GDP Italy
 
 ```{r plot gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -165,8 +170,6 @@ plot_and_zoom <- function(data, variable, country,num_years) {
 plot_and_zoom(transformed_italy$gdp, 'GDP', 'Italy', 4)
 
 ```
-
-PRESENTATIONHERE
 
 We can make some observations by looking at the graph of Italy's GDP from 2000 - 2020. The GDP shows a clear upward trend, with a sharper increase from 2000 to 2008, where it stabilizes, and again an increase from 2015-2020. The interruption in the trend corresponds to the 2008 financial crisis, which shook the economy and its growth. We can also note a seasonality throughout the time series. Italy's economy after 2001 began to slow down, even though the GDP is seen to be growing, the rate of growth had decreased. Factors such as "aging population, inflation, stagnation, and the impact of globalization on trade and demand" heavily affected the country's development and economic growth (Ardeni & Gallegati, 2023). Italy's development is slow mainly when compared to other countries European countries with similar capabilities and factors. We can observe another factor in the zoomed version of Italy's GDP. The plot shows a clear trend or pattern of seasonality, wherein in the first part of the year we observe a slight increase in the GDP, followed by a sharper increase in the second part of the year, and this is observed in all of the years included. This could be attributed to factors such as traditional vacation patterns, tourism peaks, or specific industry behaviors.
 
@@ -335,8 +338,6 @@ analyze_time_series(gdp_italy_train, "Italy", 'GDP')
 
 ```
 
-PRESENTATIONHERE
-
 In our financial analysis of Italy's GDP, the Autocorrelation Function (ACF) displayed over 15 significant lags, as well as the before seen seasonal pattern. Due to the slow decline we might conclude that it is an AR model. This is further supported due to the steep decline in the Partial Autocorrelation Function (PACF) after the fifth lag. Also the Model will probably include a seasonal component. Since is is quarterly and could already be seen in the plotted data. This might even reduce the PACF lags to 1. The Augmented Dickey-Fuller (ADF) test has a p-value of 0.83, which is more than 0.05, indicating that the data is non-stationary. The number of differences required for stationarity is 1.
 
 ```{r differenced gdp in italy, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -373,8 +374,6 @@ analyze_diff_series(gdp_italy_train, "Italy", 'GDP')
 analyze_diff_series(gdp_italy_train, "Italy", 'GDP', 4)
 
 ```
-
-PRESENTATIONHERE
 
 After using the recommended number of differences of 1 on Italy's GDP the Augmented Dickey-Fuller (ADF) test suggested marginal evidence against stationarity with a p-value of 0.062, as well as no further differencing. Since this is not completely stationary the 4th difference is take, because a seasonal component was detected in the ploted data as well as the ACF and PACF. In the seasonal scenario, the ADF test provided strong evidence for stationarity with a p-value of 0.01. This suggests to use one difference in the modeling part, as well as including a SMA.
 
@@ -438,6 +437,8 @@ analyze_diff_series(gdp_usa_train, "USA", 'GDP')
 analyze_diff_series(diff(gdp_usa_train), "USA", 'GDP')
 
 ```
+
+PRESENTATIONHERE
 
 After using the recommended number of differences (1) on USA GDP the Augmented Dickey-Fuller (ADF) test suggested evidence against stationarity with a p- value of 0.29, as well as no further differencing. Since this is not completely stationary it was differenced once more and then the ADF test provided strong evidence for stationarity. This suggests using one difference in the modeling part, and inlcuding a drift.
 
@@ -509,7 +510,7 @@ plot_volatility_clusters <- function(time_series, country, variable, uper = 0) {
 }
 
 # Plotting the volatility clustering 
-plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks')
+plot_volatility_clusters(transformed_italy$stocks, 'Italy', 'Stocks', 175)
 ```
 
 PRESENTATIONHERE
@@ -654,8 +655,6 @@ evaluate_arima_models(model_list, gdp_italy_test)
 
 ```
 
-PRESENTATIONHERE
-
 The ARIMA models we developed correspond to the following characteristics. The first function takes into consideration all the spikes of ACF and PACF and incorporates 9 autoregressive terms and 16 moving average terms, and overall uses the maximum lags. The second model uses seasonality as the main target for the modeling and tells us that it requires differencing for stationarity and for seasonal stationarity. The third uses as the parameter the lowest AIC, in this case, 334.4106, and the fourth model the lowest BIC, which was 341.2077. 
 
 
@@ -676,8 +675,6 @@ plot_residuals_arima <- function(model, country, variable){
 plot_residuals_arima(model_aic_i_gdp, "Italy", "GDP")
 
 ```
-
-PRESENTATIONHERE
 
 TODO description and saying best models and no furhter although might be better once (one so small violation okay only95 confidence interval wiht 18 lags 1 or 2 okay)
 
@@ -776,7 +773,7 @@ Also although lowes AIC the MSPE is high so the first would habe been better (or
 
 ```{r plot residual italy cpi2, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-plot_residuals_arima(seasonal_4_6_i_c, "USA", "CPI")
+plot_residuals_arima(seasonal_4_6_i_c, "Italy", "CPI")
 
 ```
 
@@ -905,7 +902,7 @@ TODO discribe (for GARCH)
 
 ```{r modelling garch italy stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-vole <- ts(g1@fit$sigma^2,end=c(2019,10),frequency = 12)
+vole <- ts(g1@fit$sigma^2,end=c(2015,12),frequency = 12)
 plot(vole,xlab="",ylab="",main="Italy stocks Volatility (GARCH[1,1])")
 
 
@@ -913,6 +910,7 @@ plot(vole,xlab="",ylab="",main="Italy stocks Volatility (GARCH[1,1])")
 
 TODO discribe (for GARCH)
 
+PRESENTATIONHERE
 
 ### 2.2.4 GDP USA
 
@@ -947,6 +945,8 @@ TODO Describe no violations
 plot_forecast_arima(gdp_usa_train, gdp_usa_test, transformed_usa$gdp, "USA", "GDP", model_aic_u_gdp)
 
 ```
+
+PRESENTATIONHERE
 
 TODO Describe forcast and why underestimated ?, not bad model since no residuals violations (best we could do)
 
@@ -1034,6 +1034,8 @@ plot_forecast_arima(cpi_usa_train, cpi_usa_test, transformed_usa$cpi, "USA", "CP
 
 ```
 
+PRESENTATIONHERE
+
 TODO discribe
 
 ### 2.2.6 Stocks USA
@@ -1073,15 +1075,60 @@ TODO discribe (for GARCH)
 
 ```{r graph garch usa stocks, echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
-vole <- ts(g1@fit$sigma^2,end=c(2019,10),frequency = 12)
+vole <- ts(g1@fit$sigma^2,end=c(2015,12),frequency = 12)
 plot(vole,xlab="",ylab="",main="USA stocks Volatility (GARCH[1,1])")
 
 
 ```
 
-TODO discribe (for GARCH)
+PRESENTATIONHERE
+
+TODO describe (for GARCH)
 
 
 # Conclusion
 
-TODO write
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
