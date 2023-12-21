@@ -14,7 +14,7 @@
 <meta name="author" content="Simon Gonzalez" />
 <meta name="author" content="Yannik Biebert" />
 
-<meta name="date" content="2023-11-28" />
+<meta name="date" content="2023-12-21" />
 
 <title>Advanced Data Analytics</title>
 
@@ -1604,7 +1604,7 @@ border-radius: 0px;
 <h4 class="author">Simon Alvarez Bliffeld</h4>
 <h4 class="author">Simon Gonzalez</h4>
 <h4 class="author">Yannik Biebert</h4>
-<h4 class="date">2023-11-28</h4>
+<h4 class="date">2023-12-21</h4>
 
 </div>
 
@@ -1613,12 +1613,12 @@ border-radius: 0px;
 <hr />
 <p><br></p>
 <p>For the final project of Advanced Data Analytics, we decided to
-analyze three variables of two different countries, and with them, find
-and dissect valuable information, with which we can create forecasts.
-The two countries that we decided on were Italy and the US. These
-countries, with their diverse economic landscapes, wield significant
-global influence, and despite their distinct economic landscapes, share
-a profound impact on the global stage.</p>
+analyze three variables of two different countries and, with them, find
+and dissect valuable information with which we can create forecasts. The
+two countries that we decided on were Italy and the US. These countries,
+with their diverse economic landscapes, wield significant global
+influence, and despite their distinct economic landscapes, share a
+profound impact on the global stage.</p>
 <p>The variables that we will be using will be the following: GDP, CPI,
 and Stock Market Index. GDP, measuring a nation’s total economic output,
 serves as a primary focus. An increase in GDP signifies economic growth,
@@ -1633,7 +1633,7 @@ equity market. Changes in the Stock Market Index are closely tied to the
 confidence in a country’s economy, reflecting investor sentiment and
 overall economic conditions. We wanted to use these variables as it has
 been proven that they are correlated, with examples such as the
-“positive and significant relationship between the GDP and CPI” <span class="citation">(Mahmoud, 2015)</span>. Our main goal for doing this
+“positive and significant relationship between GDP and CPI” <span class="citation">(Mahmoud, 2015)</span>. Our main goal for doing this
 project is to understand the economic health of each country, see how
 the variables relate to each other, and understand how we can predict
 the future, and we want to observe what these predictions are. This type
@@ -1641,9 +1641,46 @@ of work is very important in the real world, as it can help policymakers
 understand the state of their country’s economy, and with this, advise
 them in creating measures that can stabilize it and overall aid the
 country.</p>
-<p>Therefore we start the project with the question ‘How are the CPI,
+<p>Therefore, we start the project with the question ‘How are the CPI,
 GDP, and Stock Market Index of Italy and the US related to each other,
-and how can predictions help policy makers?’.</p>
+and how can predictions help policymakers?’.</p>
+<p><br></p>
+<div id="part-0-literature-review" class="section level1">
+<h1>Part 0: Literature review</h1>
+<hr />
+<p>In the flowing part a literate review about time series analysis in
+combination with the GDP, CPI and stocks, as well as the countries USA
+and Italy will be conducted. It is already known in the economic
+community, that the economic growth and health of a country can not only
+be measured by the GDP, and an ARIMA analysis of this alone is not
+enough. This is also why sometimes countries can be growing in GDP and
+still have bad economic health. <span class="citation">Cobb et al.
+(1995)</span>] This is also the reason why we are using multiple
+variabels. As a first step looking at the connection between GDP and
+inflation, literature revealed, that a too high inflation has a negative
+impact on the economy. The paper notes that the point at which a higher
+CPI affects GDP the most is at a CPI of 7%. Before that it does not seem
+to have a negative impact. <span class="citation">(Ayyoub et al.,
+2011)</span> This can help policy makers to understand limits of CPI
+that should not be surpassed and where our analysis can help to predict
+them. The strong connection of GDP and CPI as well as their indication
+of economic health is also supported in <span class="citation">(Ghazo,
+2021)</span>, since they used the same approach for predicting economic
+growth. The paper discovered that increasing CPI and increasing GDP mean
+cost-push inflation, whereas decreasing GDP and rising cpi mean
+stagflation. <span class="citation">(Ghazo, 2021)</span> Shifting focus
+to the stock market’s relationship with economic growth, literature
+shows that the stock market is as a reliable indicator. This
+relationship is explored in many studies one of which is referenced by
+<span class="citation">(Guha Deb and Mukherjee, 2008)</span>. Regarding
+modeling, ARIMA is still considered a very good approach and although it
+is outperformed by deep learning, it is still better with regards of
+computational time <span class="citation">(Namin and Namin,
+2018)</span>. Also leaving out the covid data is supported by literature
+as well, because it is important to evaluate extraordinary events
+separately <span class="citation">(Liu et al., 2020)</span></p>
+<p><br></p>
+</div>
 <div id="part-1-prepare-and-inspect-the-data" class="section level1">
 <h1>Part 1: Prepare and inspect the data</h1>
 <hr />
@@ -2118,7 +2155,6 @@ part.</p>
 ## ADF Test:
 ##   P-Value: 0.01 
 ## Number of Differences Required for Stationarity: 0</code></pre>
-<p>PRESENTATIONHERE</p>
 <p>After using the recommended number of differences (1) on USA GDP the
 Augmented Dickey-Fuller (ADF) test suggested evidence against
 stationarity with a p- value of 0.29, as well as no further
@@ -2838,12 +2874,12 @@ decision makers to keep the economy healthy.</p>
 analyzed variables, particularly evident in the comparison between the
 US and Italy. Notably, the US GDP exhibited robust and non-seasonal
 growth, outpacing Italy. The US Consumer Price Index (CPI) also
-displayed a faster rate of increase. Both shows that the economy in the
-USA is stronger and the forecast might help to improve both economies
+displayed a faster rate of increase. Both show that the economy in the
+USA is stronger, and the forecast might help to improve both economies
 further by simultaneously keeping the inflation rate in check. This
-balance is very important to maintain health economy. Also the distinct
-impacts of the housing crises on stocks and GDP further underscore the
-complexity of these interconnected economic factors.</p>
+balance is very important to maintain a healthy economy. Also, the
+distinct impacts of the housing crisis on stocks and GDP further
+underscore the complexity of these interconnected economic factors.</p>
 <p>Looking ahead, both economies show an upward trend, but our models
 highlight a concerning rise in inflation. This emphasizes the importance
 of focusing on inflation in the fiscal policy agendas of both
@@ -2860,13 +2896,44 @@ Ardeni, P. G. and Gallegati, M.: On italian economic development: What
 the long-term says about the short-term, Italian Economic Journal, <a href="https://doi.org/10.1007/s40797-023-00219-5">https://doi.org/10.1007/s40797-023-00219-5</a>,
 2023.
 </div>
+<div id="ref-ayyoub2011inflation" class="csl-entry">
+Ayyoub, M., Chaudhry, I. S., and Farooq, F.: <a href="https://www.researchgate.net/profile/Imran-Chaudhry-2/publication/349811511_Does_Inflation_Affect_Economic_Growth_The_case_of_Pakistan/links/60421e5192851c077f18be6b/Does-Inflation-Affect-Economic-Growth-The-case-of-Pakistan.pdf">Does
+inflation affect economic growth? The case of pakistan</a>, Pakistan
+Journal of Social Sciences (PJSS), 31, 51–64, 2011.
+</div>
+<div id="ref-cobb1995if" class="csl-entry">
+Cobb, C., Halstead, T., and Rowe, J.: <a href="http://www.theatlantic.com/politics/ecbig/gdp.htm">If the GDP is
+up, why is america down?</a>, The Atlantic Monthly, 1995.
+</div>
 <div id="ref-codogno2022" class="csl-entry">
 Lessons from italy’s economic decline: <a href="https://economy2030.resolutionfoundation.org/wp-content/uploads/2022/11/Lessons-from-Italys-economic-decline_.pdf">https://economy2030.resolutionfoundation.org/wp-content/uploads/2022/11/Lessons-from-Italys-economic-decline_.pdf</a>.
+</div>
+<div id="ref-ghazo2021arima" class="csl-entry">
+Ghazo, A.: Applying the ARIMA model to the process of forecasting GDP
+and CPI in the jordanian economy, International Journal of Financial
+Research, 12, 70, <a href="https://doi.org/10.5430/IJFR.V12N3P70">https://doi.org/10.5430/IJFR.V12N3P70</a>,
+2021.
+</div>
+<div id="ref-stockgdp" class="csl-entry">
+Guha Deb, S. and Mukherjee, J.: Does stock market development cause
+economic growth? A time series analysis for indian economy,
+International Research Journal of Finance and Economics, 21, 2008.
+</div>
+<div id="ref-ijerph17082800" class="csl-entry">
+Liu, H., Manzoor, A., Wang, C., Zhang, L., and Manzoor, Z.: The COVID-19
+outbreak and affected countries stock markets response, International
+Journal of Environmental Research and Public Health, 17, <a href="https://doi.org/10.3390/ijerph17082800">https://doi.org/10.3390/ijerph17082800</a>,
+2020.
 </div>
 <div id="ref-limam2015" class="csl-entry">
 Mahmoud, L. O. M.: Consumer price index and economic growth: A case
 study of mauritania 1990–2013, Asian Journal of Empirical Research, 5,
 16–23, 2015.
+</div>
+<div id="ref-siami2018forecasting" class="csl-entry">
+Namin, S. S. and Namin, A. S.: <a href="https://d1wqtxts1xzle7.cloudfront.net/81585544/1803-libre.pdf?1646238264=&amp;response-content-disposition=inline%3B+filename%3DForecasting_Economics_and_Financial_Time.pdf&amp;Expires=1703180290&amp;Signature=Z8GoK3ljdX1CH58Il0kh-MJNejP01zbO3dGdClmH0l8YJYN0~Rok9K6b3~H6~kTY~l1Sp1b7u4Fu7jqW4iAc1PH-eHTxAQyjHna0C418RdQfyQoxLZ8E24tvZNoABS3EPZ~ael5u6fS~S04SeeiThLPCcBHKujjIoDrGD9rVyuAVhkYQ4OAZTs1gPopV9HMvhTjtk27NcTfCWsWse8mUSc0YGS1FJPuygSrY~cFH88n7phJsMCIx6b85CfzlrB40l7hfPjQYQRf78KHuNk~eAflKEPIj9dIp3uUszoVwY--qBi0xqNBwfSbIvMXIUNVmHprec2FK9LSrk6vM2hoWWg__&amp;Key-Pair-Id=APKAJLOHF5GGSLRBV4ZA">Forecasting
+economic and financial time series: ARIMA vs. LSTM</a>, Texas Tech
+University, 2018.
 </div>
 </div>
 </div>

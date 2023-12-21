@@ -5,7 +5,7 @@ author:
   - Simon Alvarez Bliffeld
   - Simon Gonzalez
   - Yannik Biebert
-date: "2023-11-28"
+date: "2023-12-21"
 output:      
   rmarkdown::html_document:
     theme: cosmo
@@ -30,11 +30,27 @@ knitr::write_bib(c("references.bib"))
 
 <br>
 
-For the final project of Advanced Data Analytics, we decided to analyze three variables of two different countries, and with them, find and dissect valuable information, with which we can create forecasts. The two countries that we decided on were Italy and the US. These countries, with their diverse economic landscapes, wield significant global influence, and despite their distinct economic landscapes, share a profound impact on the global stage. 
+For the final project of Advanced Data Analytics, we decided to analyze three variables of two different countries and, with them, find and dissect valuable information with which we can create forecasts. The two countries that we decided on were Italy and the US. These countries, with their diverse economic landscapes, wield significant global influence, and despite their distinct economic landscapes, share a profound impact on the global stage.
 
-The variables that we will be using will be the following: GDP, CPI, and Stock Market Index. GDP, measuring a nation's total economic output, serves as a primary focus. An increase in GDP signifies economic growth, leading to job creation and higher incomes. Conversely, a decrease in GDP suggests a recession, bringing about unemployment and income reductions. The CPI, or Consumer Price Index, plays a pivotal role in understanding how prices for everyday goods and services are changing, offering insights into inflation and its impact on the cost of living. The Stock Market Index, another vital variable, tracks and represents the collective performance of selected stocks within each nation's equity market. Changes in the Stock Market Index are closely tied to the confidence in a country's economy, reflecting investor sentiment and overall economic conditions. We wanted to use these variables as it has been proven that they are correlated, with examples such as the “positive and significant relationship between the GDP and CPI” [@limam2015]. Our main goal for doing this project is to understand the economic health of each country, see how the variables relate to each other, and understand how we can predict the future, and we want to observe what these predictions are. This type of work is very important in the real world, as it can help policymakers understand the state of their country’s economy, and with this, advise them in creating measures that can stabilize it and overall aid the country.  
+The variables that we will be using will be the following: GDP, CPI, and Stock Market Index. GDP, measuring a nation's total economic output, serves as a primary focus. An increase in GDP signifies economic growth, leading to job creation and higher incomes. Conversely, a decrease in GDP suggests a recession, bringing about unemployment and income reductions. The CPI, or Consumer Price Index, plays a pivotal role in understanding how prices for everyday goods and services are changing, offering insights into inflation and its impact on the cost of living. The Stock Market Index, another vital variable, tracks and represents the collective performance of selected stocks within each nation's equity market. Changes in the Stock Market Index are closely tied to the confidence in a country's economy, reflecting investor sentiment and overall economic conditions. We wanted to use these variables as it has been proven that they are correlated, with examples such as the “positive and significant relationship between GDP and CPI” [@limam2015]. Our main goal for doing this project is to understand the economic health of each country, see how the variables relate to each other, and understand how we can predict the future, and we want to observe what these predictions are. This type of work is very important in the real world, as it can help policymakers understand the state of their country’s economy, and with this, advise them in creating measures that can stabilize it and overall aid the country.
 
-Therefore we start the project with the question 'How are the CPI, GDP, and Stock Market Index of Italy and the US related to each other, and how can predictions help policy makers?'.
+Therefore, we start the project with the question 'How are the CPI, GDP, and Stock Market Index of Italy and the US related to each other, and how can predictions help policymakers?'.
+
+<br>
+
+# Part 0: Literature review
+
+------------------------------------------------------------------------
+
+In the flowing part a literate review about time series analysis in combination with the GDP, CPI and stocks, as well as the countries USA and Italy will be conducted.
+It is already known in the economic community, that the economic growth and health of a country can not only be measured by the GDP, and an ARIMA analysis of this alone is not enough. This is also why sometimes countries can be growing in GDP and still have bad economic health. @cobb1995if] This is also the reason why we are using multiple variabels.
+As a first step looking at the connection between GDP and inflation, literature revealed, that a too high inflation has a negative impact on the economy. The paper notes that the point at which a higher CPI affects GDP the most is at a CPI of 7%. Before that it does not seem to have a negative impact. [@ayyoub2011inflation] 
+This can help policy makers to understand limits of CPI that should not be surpassed and where our analysis can help to predict them. The strong connection of GDP and CPI as well as their indication of economic health is also supported in [@ghazo2021arima], since they used the same approach for predicting economic growth. The paper discovered that increasing CPI and increasing GDP mean cost-push inflation, whereas decreasing GDP and rising cpi mean stagflation. [@ghazo2021arima]
+Shifting focus to the stock market's relationship with economic growth, literature shows that the stock market is as a reliable indicator. This relationship is explored in many studies one of which is referenced by [@stockgdp].
+Regarding modeling, ARIMA is still considered a very good approach and although it is outperformed by deep learning, it is still better with regards of computational time [@siami2018forecasting]. Also leaving out the covid data is supported by literature as well, because it is important to evaluate extraordinary events separately [@ijerph17082800]
+
+
+<br>
 
 # Part 1: Prepare and inspect the data
 
@@ -417,8 +433,6 @@ analyze_diff_series(gdp_usa_train, "USA", 'GDP')
 analyze_diff_series(diff(gdp_usa_train), "USA", 'GDP')
 
 ```
-
-PRESENTATIONHERE
 
 After using the recommended number of differences (1) on USA GDP the Augmented Dickey-Fuller (ADF) test suggested evidence against stationarity with a p- value of 0.29, as well as no further differencing. Since this is not completely stationary it was differenced once more and then the ADF test provided strong evidence for stationarity. This suggests using one difference in the modeling part, and inclcuding a drift.
 
@@ -1051,7 +1065,7 @@ We can see a very accurate model which captures the housing crisis as well as ec
 
 # Conclusion
 
-In conclusion, our project reveals a close interrelation among the analyzed variables, particularly evident in the comparison between the US and Italy. Notably, the US GDP exhibited robust and non-seasonal growth, outpacing Italy. The US Consumer Price Index (CPI) also displayed a faster rate of increase. Both shows that the economy in the USA is stronger and the forecast might help to improve both economies further by simultaneously keeping the inflation rate in check. This balance is very important to maintain health economy. Also the distinct impacts of the housing crises on stocks and GDP further underscore the complexity of these interconnected economic factors.
+In conclusion, our project reveals a close interrelation among the analyzed variables, particularly evident in the comparison between the US and Italy. Notably, the US GDP exhibited robust and non-seasonal growth, outpacing Italy. The US Consumer Price Index (CPI) also displayed a faster rate of increase. Both show that the economy in the USA is stronger, and the forecast might help to improve both economies further by simultaneously keeping the inflation rate in check. This balance is very important to maintain a healthy economy. Also, the distinct impacts of the housing crisis on stocks and GDP further underscore the complexity of these interconnected economic factors.
 
 Looking ahead, both economies show an upward trend, but our models highlight a concerning rise in inflation. This emphasizes the importance of focusing on inflation in the fiscal policy agendas of both governments to ensure sustainable economic growth and stability.
 
